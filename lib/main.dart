@@ -49,6 +49,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  bool _showTooltip = true;
 
   void _incrementCounter() {
     setState(() {
@@ -78,7 +79,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
+        child:  
+        SingleChildScrollView (child :Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -107,30 +109,14 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.all(10),
               child: Column(
                 children: [
-                  Container(
-                    height: 20,
-                    width: 200,
-                    color: Colors.red,
-                    child: Text("Container1"),
-                  ),
-                  Container(
-                    height: 20,
-                    width: 200,
-                    color: Colors.blue,
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text("Container2"),
-                  ),
-                  Container(
-                    height: 20,
-                    width: 200,
-                    color: Colors.blue,
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text("Container2"),
-                  ),
+                  FortuneHistory(label:"아침"),
+                  FortuneHistory(label:"점심"),
+                  FortuneHistory(label:"저녁"),
                 ],
               ),
             ),
           ],
+        ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -154,3 +140,53 @@ const fortuneStringList = [
     "삶은 여행입니다. 여러 경험을 쌓으며 자신을 발전시키세요.",
     "가장 큰 성공은 자신을 인정하고 사랑하는 데서 찾을 수 있습니다. 자기 자신에게 자신감을 갖으세요."
 ];
+
+
+class FortuneHistory extends StatelessWidget {
+  final String label;
+
+  FortuneHistory({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return                   
+      Container(
+      padding: EdgeInsets.all(5.0),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey,
+            width: 1.0,
+          ),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 15.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(width: 8.0),
+                Flexible(
+          child: RichText(
+        overflow: TextOverflow.ellipsis,
+        maxLines: 5,
+        strutStyle: StrutStyle(fontSize: 16.0),
+        text: TextSpan(
+            text:            fortuneStringList[0],
+
+            style: TextStyle(
+                color: Colors.black,
+                height: 1.4,
+                fontSize: 16.0,
+                fontFamily: 'NanumSquareRegular')),
+         )),
+        ],
+      ),
+    );
+  }
+}
