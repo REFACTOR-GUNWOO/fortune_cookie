@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:fortune_cookie_flutter/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,21 +14,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        routes: Routes.routes);
   }
 }
 
@@ -61,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      if (_counter > 10) {
+        Navigator.pushNamed(context, '/resultPage');
+        _counter = 0;
+      }
     });
   }
 
@@ -102,22 +107,24 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontWeight: FontWeight.w800,
                         fontSize: 20,
                         color: Color.fromARGB(255, 94, 92, 85))),
-                const Text(
-                  '아침 시간대의\n나의 운세를 뽑아보세요',
-                  style: TextStyle(
+                const Text('아침 시간대의\n나의 운세를 뽑아보세요',
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 32,
-                      color: Color.fromARGB(255, 94, 92, 85)),
-                ),
+                      color: Colors.black,
+                    )),
               ], crossAxisAlignment: CrossAxisAlignment.start),
               Container(
-                height: 200,
-                width: 200,
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 100, vertical: 100),
-                child: SvgPicture.asset('assets/icons/fortune_cookie.svg',
-                    fit: BoxFit.cover),
-              ),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 100, vertical: 100),
+                  child: IconButton(
+                    onPressed: () {
+                      _incrementCounter();
+                    },
+                    iconSize: 200,
+                    icon: SvgPicture.asset('assets/icons/fortune_cookie.svg',
+                        width: 200, height: 200),
+                  )),
               const FortuneHistoryContainer()
             ],
           ),
