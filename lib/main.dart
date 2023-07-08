@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,6 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  String getToday() {
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('M월 d일');
+    return formatter.format(now);
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -73,39 +80,43 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+          centerTitle: false,
+          title: const Text(
+            'forture for future',
+            style: TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 20, color: Colors.brown),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0),
+      backgroundColor: const Color.fromARGB(255, 254, 249, 230),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: SingleChildScrollView(
           child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                '아침 시간대의 운세를 뽑아보세요',
-              ),
+              Column(children: [
+                Text(getToday(),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                        color: Color.fromARGB(255, 94, 92, 85))),
+                const Text(
+                  '아침 시간대의\n나의 운세를 뽑아보세요',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 32,
+                      color: Color.fromARGB(255, 94, 92, 85)),
+                ),
+              ], crossAxisAlignment: CrossAxisAlignment.start),
               Container(
                 height: 200,
-                color: Colors.red,
+                width: 200,
                 margin:
                     const EdgeInsets.symmetric(horizontal: 100, vertical: 100),
+                child: SvgPicture.asset('assets/icons/fortune_cookie.svg',
+                    fit: BoxFit.cover),
               ),
               const FortuneHistoryContainer()
             ],
