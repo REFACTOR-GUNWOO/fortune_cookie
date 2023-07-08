@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class ResultPage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -13,6 +14,11 @@ class ResultPage extends StatefulWidget {
   @override
   State<ResultPage> createState() => _ResultPageState();
 }
+
+const Map<String, String> UNIT_ID = {
+  'ios': 'ca-app-pub-3940256099942544/1712485313',
+  'android': 'ca-app-pub-3940256099942544/6300978111',
+};
 
 class _ResultPageState extends State<ResultPage> {
   int _counter = 0;
@@ -31,6 +37,33 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    TargetPlatform os = Theme.of(context).platform;
+    void showRewardFullBanner(Function callback) async {
+      await RewardedAd.load(
+        adUnitId: "ca-app-pub-3940256099942544/5224354917",
+        request: const AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          onAdLoaded: (RewardedAd ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdDismissedFullScreenContent: (RewardedAd ad) {
+                ad.dispose();
+              },
+              onAdFailedToShowFullScreenContent:
+                  (RewardedAd ad, AdError error) {
+                ad.dispose();
+              },
+            );
+            ad.show(onUserEarnedReward: (ad, reward) {
+              callback();
+            });
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            callback();
+          },
+        ),
+      );
+    }
+
     return Scaffold(
         appBar: AppBar(),
         backgroundColor: Colors.black,
@@ -59,12 +92,16 @@ class _ResultPageState extends State<ResultPage> {
           ),
           Container(
               margin: const EdgeInsets.symmetric(vertical: 24.0),
-              child: const Text('광고보고 운세 다시 뽑기 0/3',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 16,
-                    color: Colors.white,
-                  ))),
+              child: TextButton(
+                  onPressed: () {
+                    showRewardFullBanner(() async {});
+                  },
+                  child: const Text('광고보고 운세 다시 뽑기 0/3',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        color: Colors.white,
+                      )))),
         ]));
   }
 }

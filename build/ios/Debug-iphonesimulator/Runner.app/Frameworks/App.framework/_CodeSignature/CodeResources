@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		ME0cAg6cl/bTZmwXEVgMugDccUI=
+		XfUEOFCrO5z9Zn7YtsUIfXXCFGw=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		oG5/OGn+vw7vp/nu5DUDoZJ4nFc=
+		g/ZP6GG6BMbS6BY1g6FZn9w23pk=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +22,11 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		Zn1rmRxRVBqdnOpSU4L9Mh4qKLc=
+		hOhYdI/HgWAwIk9ObxBhk43JB2g=
+		</data>
+		<key>flutter_assets/assets/icons/fortune_cookie.svg</key>
+		<data>
+		7RBprrdCH1byx4b/gLlySBxZ22Y=
 		</data>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -34,7 +38,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		qZO/xKoicijkKsp3or+WAT+NuHI=
+		jTOTUVEgp4pUuQxtUTTw0xGWJ64=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -55,14 +59,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			AK9VrT1vIYmP534P8JLRoc2lLJQbaGDpko1FyK+MCV0=
+			ARPecz8TbXM5XV+9H68wus8Elrua8FTgPauZDrOW/Qk=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Sps95+7JukayebvM0TLjL1LW1VXXndpKp/O8tOm9ZR8=
+			RxYEMOSFcePV6xoN3ywTk6Vx/YRkVfp17PCFobw/s4o=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -76,7 +80,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			HTo3zQ2ipy7iuOQPGDj+hPntmlnZNxeSnbMvpFqAwe0=
+			C0WpBWLoRXvtSRErV6jAXBHJ47hD/qrdlI7iCbQieA8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/icons/fortune_cookie.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ghct200fh+p36VuCV6kTKg0uNTSzUUz3LtM9xZNnIsQ=
 			</data>
 		</dict>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
@@ -97,7 +108,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			25LTno1MR/Ed4GjRGMcOzRXQEdQD494mOMr+jGpyNjg=
+			KMu3XT12SQs20B/W5Vl4Lg6nU5aQjeBhRIuaxSL/l/w=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
