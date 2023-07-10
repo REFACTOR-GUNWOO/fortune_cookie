@@ -53,7 +53,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   int _counter = 0;
   bool _showTooltip = true;
 
@@ -65,6 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      _animationController.reset();
+      _animationController.forward();
       if (_counter > 10) {
         Navigator.pushNamed(context, '/resultPage');
         _counter = 0;
@@ -76,6 +79,32 @@ class _MyHomePageState extends State<MyHomePage> {
     DateTime now = DateTime.now();
     DateFormat formatter = DateFormat('M월 d일');
     return formatter.format(now);
+  }
+
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: -100, end: 100).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.linear,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -117,17 +146,27 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.black,
                     )),
               ], crossAxisAlignment: CrossAxisAlignment.start),
-              Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 100, vertical: 100),
-                  child: IconButton(
-                    onPressed: () {
-                      _incrementCounter();
-                    },
-                    iconSize: 200,
-                    icon: SvgPicture.asset('assets/icons/fortune_cookie.svg',
-                        width: 200, height: 200),
-                  )),
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (BuildContext context, Widget? child) {
+                  return Transform.translate(
+                    offset: Offset(_animation.value, 0),
+                    child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 100, vertical: 100),
+                        child: IconButton(
+                          onPressed: () {
+                            _incrementCounter();
+                          },
+                          iconSize: 200,
+                          icon: SvgPicture.asset(
+                              'assets/icons/fortune_cookie.svg',
+                              width: 200,
+                              height: 200),
+                        )),
+                  );
+                },
+              ),
               const FortuneHistoryContainer()
             ],
           ),
