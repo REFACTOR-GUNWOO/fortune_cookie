@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gif/flutter_gif.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
+          fontFamily: "Suite",
           // This is the theme of your application.
           //
           // Try running your application with "flutter run". You'll see the
@@ -53,21 +55,29 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 0;
   bool _showTooltip = true;
+  bool enableTouchFortuneCookie = true;
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
+      if (!enableTouchFortuneCookie) {
+        print("object");
+        return;
+      }
       _counter++;
+
       _animationController.reset();
       _animationController.forward();
+      enableTouchFortuneCookie = false;
+      TickerFuture future = _controller.animateBack(15,
+          duration: const Duration(milliseconds: 500));
+      future.whenComplete(() => {
+            enableTouchFortuneCookie = true,
+            _controller.animateBack(0,
+                duration: const Duration(milliseconds: 500))
+          });
       if (_counter > 10) {
         Navigator.pushNamed(context, '/resultPage');
         _counter = 0;
@@ -83,10 +93,12 @@ class _MyHomePageState extends State<MyHomePage>
 
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late FlutterGifController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = FlutterGifController(vsync: this);
 
     _animationController = AnimationController(
       duration: Duration(milliseconds: 500),
@@ -116,62 +128,63 @@ class _MyHomePageState extends State<MyHomePage>
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: false,
-          title: const Text(
-            'forture for future',
-            style: TextStyle(
-                fontWeight: FontWeight.w600, fontSize: 20, color: Colors.brown),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0),
       backgroundColor: const Color.fromARGB(255, 254, 249, 230),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Column(children: [
-                Text(getToday(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 94, 92, 85))),
-                const Text('아침 시간대의\n나의 운세를 뽑아보세요',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 32,
-                      color: Colors.black,
-                    )),
-              ], crossAxisAlignment: CrossAxisAlignment.start),
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (BuildContext context, Widget? child) {
-                  return Transform.translate(
-                    offset: Offset(_animation.value, 0),
-                    child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 100, vertical: 100),
-                        child: IconButton(
-                          onPressed: () {
-                            _incrementCounter();
-                          },
-                          iconSize: 200,
-                          icon: SvgPicture.asset(
-                              'assets/icons/fortune_cookie.svg',
-                              width: 200,
-                              height: 200),
-                        )),
-                  );
-                },
-              ),
-              const FortuneHistoryContainer()
-            ],
+      body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.png"),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-      ),
+          child: Column(children: [
+            AppBar(
+                centerTitle: false,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                title: const Text(
+                  'forture for future',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                      color: Colors.brown),
+                )),
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Column(children: [
+                    Text(getToday(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 94, 92, 85))),
+                    const Text('아침 시간대의\n나의 운세를 뽑아보세요',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 32,
+                          color: Colors.black,
+                        )),
+                  ], crossAxisAlignment: CrossAxisAlignment.start),
+                  IconButton(
+                    onPressed: () {
+                      if (!enableTouchFortuneCookie) {
+                        print("object2");
+                        return;
+                      }
+                      _incrementCounter();
+                    },
+                    iconSize: 200,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    icon: GifImage(
+                      controller: _controller,
+                      image: const AssetImage("assets/gif/fortune_cookie.gif"),
+                    ),
+                  ),
+                  const FortuneHistoryContainer()
+                ],
+              ),
+            ),
+          ])),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
