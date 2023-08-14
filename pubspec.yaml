@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -57,7 +57,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -68,6 +67,8 @@ flutter:
     - assets/icons/fortune_cookie.svg
     - assets/gif/fortune_cookie.gif
     - assets/images/background.png
+    - assets/images/fortune_cookie.svg
+    - assets/images/fortune_result_background.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -82,19 +83,6 @@ flutter:
   fonts:
     - family: Suite
       fonts:
-        - asset: assets/fonts/SUITE-Light.woff2
-          weight: 300
-        - asset: assets/fonts/SUITE-Regular.woff2
-          weight: 400
-        - asset: assets/fonts/SUITE-Medium.woff2
-          weight: 500
-        - asset: assets/fonts/SUITE-SemiBold.woff2
-          weight: 600
-        - asset: assets/fonts/SUITE-Bold.woff2
-          weight: 700
-        - asset: assets/fonts/SUITE-ExtraBold.woff2
-          weight: 800
-        - asset: assets/fonts/SUITE-Heavy.woff2
-          weight: 900
+        - asset: assets/fonts/font.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

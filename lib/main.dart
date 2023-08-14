@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'fortune_cookie.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
@@ -59,6 +61,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 0;
   bool _showTooltip = true;
   bool enableTouchFortuneCookie = true;
+  bool showResultPage = false;
+
+  void togglePage() {
+    Navigator.pushNamed(context, '/fortuneResult');
+  }
+
+  String getFloatingButtonText() {
+    if (showResultPage) {
+      print("운세 뽑으러 가기");
+
+      return ("운세 뽑으러 가기");
+    } else {
+      print("운세 결과 보기");
+
+      return ("운세 결과 보기");
+    }
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -121,23 +140,28 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    List<String> getCategories() {
+      return ["오늘의 운세 점수", "사람 운세", "금전 운세", "사랑 운세"];
+    }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 254, 249, 230),
-      body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/background.png"),
-              fit: BoxFit.cover,
+    return DefaultTabController(
+        length: 4,
+        child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/background.png"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: Column(children: [
-            AppBar(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -147,50 +171,29 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       fontWeight: FontWeight.w900,
                       fontSize: 20,
                       color: Colors.brown),
-                )),
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Column(children: [
-                    Text(getToday(),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 20,
-                            color: Color.fromARGB(255, 94, 92, 85))),
-                    const Text('아침 시간대의\n나의 운세를 뽑아보세요',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 32,
-                          color: Colors.black,
-                        )),
-                  ], crossAxisAlignment: CrossAxisAlignment.start),
-                  IconButton(
-                    onPressed: () {
-                      if (!enableTouchFortuneCookie) {
-                        print("object2");
-                        return;
-                      }
-                      _incrementCounter();
-                    },
-                    iconSize: 200,
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    icon: GifImage(
-                      controller: _controller,
-                      image: const AssetImage("assets/gif/fortune_cookie.gif"),
-                    ),
-                  ),
-                  const FortuneHistoryContainer()
-                ],
+                ),
+                bottom: TabBar(
+                  tabs: getCategories()
+                      .map(
+                        (e) => Tab(icon: Icon(Icons.tag_faces), text: e),
+                      )
+                      .toList(),
+                ),
               ),
-            ),
-          ])),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+              body: TabBarView(
+                  children: getCategories()
+                      .map(
+                        (e) => FortuneCookie(
+                          fortuneCategory: e,
+                        ),
+                      )
+                      .toList()),
+              floatingActionButton: FloatingActionButton(
+                  onPressed: togglePage,
+                  tooltip: 'Increment',
+                  child: Text(
+                      getFloatingButtonText())), // This trailing comma makes auto-formatting nicer for build methods.
+            )));
   }
 }
 
