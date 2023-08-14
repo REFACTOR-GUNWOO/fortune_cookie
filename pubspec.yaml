@@ -39,6 +39,7 @@ dependencies:
   google_mobile_ads: ^3.0.0
   flutter_shake_animated: ^0.0.5
   flutter_gif: any
+  shared_preferences: ^2.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -69,6 +70,8 @@ flutter:
     - assets/images/background.png
     - assets/images/fortune_cookie.svg
     - assets/images/fortune_result_background.svg
+    - assets/images/synerge_disabled.svg
+    - assets/images/synerge_enabled.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

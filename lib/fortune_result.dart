@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fortune_cookie_flutter/synerge.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'category.dart';
 
 class FortuneResult extends StatefulWidget {
   // final String fortuneCategory;
@@ -39,25 +42,46 @@ class _FortuneResultState extends State<FortuneResult> {
     }
 
     return DefaultTabController(
-        length: 4,
+        length: getCategories().length,
         child: Scaffold(
             floatingActionButton: FloatingActionButton(
                 onPressed: togglePage,
                 tooltip: 'Increment',
                 child: Text("운세 뽑으러 가기")),
-            body: TabBarView(children: [
-              Container(
-                child: Text("1234"),
-              ),
-              Container(
-                child: Text("1234"),
-              ),
-              Container(
-                child: Text("1234"),
-              ),
-              Container(
-                child: Text("1234"),
-              )
-            ])));
+            body: TabBarView(
+                children: getCategories()
+                    .map(
+                      (e) => Center(
+                          child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              color: const Color.fromARGB(255, 193, 182, 182),
+                              width: 400,
+                              height: 600,
+                              child: Column(
+                                children: [
+                                  Text(e.name, style: TextStyle(fontSize: 22)),
+                                  Text("확신이 서지 않아\n힘든 날이군요",
+                                      style: TextStyle(fontSize: 22)),
+                                  Row(
+                                    children: [
+                                      Synerge(
+                                        synergeType: "장소",
+                                        fortuneCategory: e.name,
+                                      ),
+                                      Synerge(
+                                        synergeType: "컬러",
+                                        fortuneCategory: e.name,
+                                      ),
+                                      Synerge(
+                                        synergeType: "물건",
+                                        fortuneCategory: e.name,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ))),
+                    )
+                    .toList())));
   }
 }
