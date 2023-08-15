@@ -4,12 +4,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'category.dart';
 import 'fortune_cookie.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+
+  // final pref = await SharedPreferences.getInstance();
+  // await pref.clear();
+
   runApp(const MyApp());
 }
 
@@ -62,19 +67,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool _showTooltip = true;
   bool enableTouchFortuneCookie = true;
   bool showResultPage = false;
+  late TabController _tabController;
 
   void togglePage() {
-    Navigator.pushNamed(context, '/fortuneResult');
+    Navigator.pushNamed(context, '/fortuneResult',
+        arguments: _tabController.index);
   }
 
   String getFloatingButtonText() {
     if (showResultPage) {
       print("운세 뽑으러 가기");
-
       return ("운세 뽑으러 가기");
     } else {
       print("운세 결과 보기");
-
       return ("운세 결과 보기");
     }
   }
@@ -118,18 +123,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = FlutterGifController(vsync: this);
-
-    _animationController = AnimationController(
-      duration: Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _animation = Tween<double>(begin: -100, end: 100).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.linear,
-      ),
-    );
+    _tabController = TabController(vsync: this, length: getCategories().length);
   }
 
   @override
@@ -140,60 +134,56 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    List<String> getCategories() {
-      return ["오늘의 운세 점수", "사람 운세", "금전 운세", "사랑 운세"];
-    }
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return DefaultTabController(
-        length: 4,
-        child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/images/background.png"),
-                fit: BoxFit.cover,
-              ),
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            centerTitle: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text(
+              'forture for future',
+              style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20,
+                  color: Colors.brown),
             ),
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                centerTitle: false,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                title: const Text(
-                  'forture for future',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 20,
-                      color: Colors.brown),
-                ),
-                bottom: TabBar(
-                  tabs: getCategories()
-                      .map(
-                        (e) => Tab(icon: Icon(Icons.tag_faces), text: e),
-                      )
-                      .toList(),
-                ),
-              ),
-              body: TabBarView(
-                  children: getCategories()
-                      .map(
-                        (e) => FortuneCookie(
-                          fortuneCategory: e,
-                        ),
-                      )
-                      .toList()),
-              floatingActionButton: FloatingActionButton(
-                  onPressed: togglePage,
-                  tooltip: 'Increment',
-                  child: Text(
-                      getFloatingButtonText())), // This trailing comma makes auto-formatting nicer for build methods.
-            )));
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: getCategories()
+                  .map(
+                    (e) => Tab(icon: Icon(Icons.tag_faces), text: e.name),
+                  )
+                  .toList(),
+            ),
+          ),
+          body: TabBarView(
+              controller: _tabController,
+              children: getCategories()
+                  .map(
+                    (e) => FortuneCookie(
+                      fortuneCategory: e.name,
+                    ),
+                  )
+                  .toList()),
+          floatingActionButton: FloatingActionButton(
+              onPressed: togglePage,
+              tooltip: 'Increment',
+              child: Text(
+                  getFloatingButtonText())), // This trailing comma makes auto-formatting nicer for build methods.
+        ));
   }
 }
 
@@ -209,128 +199,3 @@ const fortuneStringList = [
   "삶은 여행입니다. 여러 경험을 쌓으며 자신을 발전시키세요.",
   "가장 큰 성공은 자신을 인정하고 사랑하는 데서 찾을 수 있습니다. 자기 자신에게 자신감을 갖으세요."
 ];
-
-class FortuneHistory extends StatelessWidget {
-  final String label;
-
-  const FortuneHistory({Key? key, required this.label}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(5.0),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 15.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(width: 8.0),
-          Flexible(
-              child: RichText(
-            overflow: TextOverflow.ellipsis,
-            maxLines: 5,
-            strutStyle: const StrutStyle(fontSize: 16.0),
-            text: TextSpan(
-                text: fortuneStringList[0],
-                style: const TextStyle(
-                    color: Colors.black,
-                    height: 1.4,
-                    fontSize: 16.0,
-                    fontFamily: 'NanumSquareRegular')),
-          )),
-        ],
-      ),
-    );
-  }
-}
-
-class FortuneHistoryContainer extends StatelessWidget {
-  const FortuneHistoryContainer({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        shape: RoundedRectangleBorder(
-          //모서리를 둥글게 하기 위해 사용
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        elevation: 4.0, //그림자 깊이
-        child: const Row(children: [
-          Flexible(
-              child: FortuneHistoryCard(
-                  checked: true, label: '아침', timeString: '오전 6~9시'),
-              fit: FlexFit.tight),
-          Flexible(
-              child: FortuneHistoryCard(
-                  checked: false, label: '점심', timeString: '오전 11~2시'),
-              fit: FlexFit.tight),
-          Flexible(
-              child: FortuneHistoryCard(
-                  checked: false, label: '저녁', timeString: '오후 6~9시'),
-              fit: FlexFit.tight),
-        ], mainAxisAlignment: MainAxisAlignment.spaceBetween));
-  }
-}
-
-class FortuneHistoryCard extends StatelessWidget {
-  final String label;
-  final String timeString;
-  final bool checked;
-
-  Color cardColor() {
-    if (checked) {
-      return const Color.fromARGB(255, 243, 242, 237);
-    } else {
-      return Colors.transparent;
-    }
-  }
-
-  const FortuneHistoryCard(
-      {Key? key,
-      required this.label,
-      required this.timeString,
-      required this.checked})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        elevation: 0,
-        margin: const EdgeInsets.all(8.0),
-        color: cardColor(),
-        shape: RoundedRectangleBorder(
-          //모서리를 둥글게 하기 위해 사용
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Container(
-            margin: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                SvgPicture.asset('assets/icons/fortune_cookie.svg',
-                    width: 60, height: 60),
-                Text(
-                  label,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800, fontSize: 24),
-                ),
-                Text(timeString,
-                    style: const TextStyle(
-                        fontSize: 14, color: Color.fromARGB(255, 94, 92, 85)))
-              ],
-            )));
-  }
-}

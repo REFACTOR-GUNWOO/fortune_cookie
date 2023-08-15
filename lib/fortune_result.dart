@@ -22,7 +22,8 @@ class FortuneResult extends StatefulWidget {
   State<FortuneResult> createState() => _FortuneResultState();
 }
 
-class _FortuneResultState extends State<FortuneResult> {
+class _FortuneResultState extends State<FortuneResult>
+    with TickerProviderStateMixin {
   int _counter = 0;
   void _incrementCounter() {
     setState(() {
@@ -35,53 +36,65 @@ class _FortuneResultState extends State<FortuneResult> {
     });
   }
 
+  late TabController _tabController;
+  @override
+  void initState() {
+    super.initState();
+
+    // SingleTickerProviderStateMixin를 상속 받아서
+    // vsync에 this 형태로 전달해야 애니메이션이 정상 처리된다.
+    _tabController = TabController(vsync: this, length: getCategories().length);
+  }
+
   @override
   Widget build(BuildContext context) {
     void togglePage() {
       Navigator.pushNamed(context, '/');
     }
 
-    return DefaultTabController(
-        length: getCategories().length,
-        child: Scaffold(
-            floatingActionButton: FloatingActionButton(
-                onPressed: togglePage,
-                tooltip: 'Increment',
-                child: Text("운세 뽑으러 가기")),
-            body: TabBarView(
-                children: getCategories()
-                    .map(
-                      (e) => Center(
-                          child: Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 24.0),
-                              color: const Color.fromARGB(255, 193, 182, 182),
-                              width: 400,
-                              height: 600,
-                              child: Column(
+    final int categoryIndex =
+        (ModalRoute.of(context)!.settings.arguments ?? 0) as int;
+    _tabController.animateTo(categoryIndex);
+
+    return Scaffold(
+        floatingActionButton: FloatingActionButton(
+            onPressed: togglePage,
+            tooltip: 'Increment',
+            child: Text("운세 뽑으러 가기")),
+        body: TabBarView(
+            controller: _tabController,
+            children: getCategories()
+                .map(
+                  (e) => Center(
+                      child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                          color: const Color.fromARGB(255, 193, 182, 182),
+                          width: 400,
+                          height: 600,
+                          child: Column(
+                            children: [
+                              Text(e.name, style: TextStyle(fontSize: 22)),
+                              Text("확신이 서지 않아\n힘든 날이군요",
+                                  style: TextStyle(fontSize: 22)),
+                              Row(
                                 children: [
-                                  Text(e.name, style: TextStyle(fontSize: 22)),
-                                  Text("확신이 서지 않아\n힘든 날이군요",
-                                      style: TextStyle(fontSize: 22)),
-                                  Row(
-                                    children: [
-                                      Synerge(
-                                        synergeType: "장소",
-                                        fortuneCategory: e.name,
-                                      ),
-                                      Synerge(
-                                        synergeType: "컬러",
-                                        fortuneCategory: e.name,
-                                      ),
-                                      Synerge(
-                                        synergeType: "물건",
-                                        fortuneCategory: e.name,
-                                      )
-                                    ],
+                                  Synerge(
+                                    synergeType: "장소",
+                                    fortuneCategory: e.name,
+                                  ),
+                                  Synerge(
+                                    synergeType: "컬러",
+                                    fortuneCategory: e.name,
+                                  ),
+                                  Synerge(
+                                    synergeType: "물건",
+                                    fortuneCategory: e.name,
                                   )
                                 ],
-                              ))),
-                    )
-                    .toList())));
+                              )
+                            ],
+                          ))),
+                )
+                .toList()));
   }
 }

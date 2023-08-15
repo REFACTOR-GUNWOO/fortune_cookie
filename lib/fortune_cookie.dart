@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lottie/lottie.dart';
 
 class FortuneCookie extends StatefulWidget {
   final String fortuneCategory;
@@ -21,6 +23,8 @@ class FortuneCookie extends StatefulWidget {
 }
 
 class _FortuneCookieState extends State<FortuneCookie> {
+  late bool _opened = false;
+
   int _counter = 0;
   void _incrementCounter() {
     setState(() {
@@ -33,11 +37,56 @@ class _FortuneCookieState extends State<FortuneCookie> {
     });
   }
 
+  String _getOpenedKey() {
+    return "${widget.fortuneCategory}.fortueCookie.opened";
+  }
+
+  _loadFortuneCookieInfo() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _opened = _prefs.getBool(_getOpenedKey()) ?? false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFortuneCookieInfo();
+  }
+
+  SvgPicture _getCookieImage() {
+    if (!_opened) {
+      return SvgPicture.asset("assets/images/fortune_cookie.svg");
+    } else {
+      return SvgPicture.asset("assets/images/fortune_cookie_opened.svg");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Column(children: [
-      SvgPicture.asset("assets/images/fortune_cookie.svg"),
+      Lottie.asset('assets/lotties/touch.json'),
+      // Container(
+      //     width: 400,
+      //     height: 400,
+      //     child: IconButton(
+      //         style: const ButtonStyle(iconSize: MaterialStatePropertyAll(400)),
+      //         onPressed: () async {
+      //           SharedPreferences _prefs =
+      //               await SharedPreferences.getInstance();
+      //           if (_opened)
+      //             setState(() {
+      //               _opened = false;
+      //             });
+      //           else
+      //             setState(() {
+      //               _opened = true;
+      //             });
+
+      //           await _prefs.setBool(_getOpenedKey(), _opened);
+      //         },
+      //         icon: _getCookieImage())),
       Text("오늘 나의 ${widget.fortuneCategory}를 뽑아보세요")
     ]));
   }
