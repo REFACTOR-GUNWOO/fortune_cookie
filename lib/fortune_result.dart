@@ -56,45 +56,65 @@ class _FortuneResultState extends State<FortuneResult>
         (ModalRoute.of(context)!.settings.arguments ?? 0) as int;
     _tabController.animateTo(categoryIndex);
 
-    return Scaffold(
-        floatingActionButton: FloatingActionButton(
-            onPressed: togglePage,
-            tooltip: 'Increment',
-            child: Text("운세 뽑으러 가기")),
-        body: TabBarView(
-            controller: _tabController,
-            children: getCategories()
-                .map(
-                  (e) => Center(
-                      child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 24.0),
-                          color: const Color.fromARGB(255, 193, 182, 182),
-                          width: 400,
-                          height: 600,
-                          child: Column(
-                            children: [
-                              Text(e.name, style: TextStyle(fontSize: 22)),
-                              Text("확신이 서지 않아\n힘든 날이군요",
-                                  style: TextStyle(fontSize: 22)),
-                              Row(
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: togglePage,
+              tooltip: 'Increment',
+              label: Text("운세 뽑으러 가기"),
+              backgroundColor: Color.fromARGB(255, 43, 43, 43),
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation
+                .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
+            body: TabBarView(
+                controller: _tabController,
+                children: getCategories()
+                    .map(
+                      (e) => Center(
+                          child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              color: const Color.fromARGB(255, 193, 182, 182),
+                              width: 400,
+                              height: 600,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Synerge(
-                                    synergeType: "장소",
-                                    fortuneCategory: e.name,
+                                  Text(e.name, style: TextStyle(fontSize: 22)),
+                                  Text("확신이 서지 않아\n힘든 날이군요",
+                                      style: TextStyle(fontSize: 22)),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Synerge(
+                                          synergeType: "장소",
+                                          fortuneCategory: e.name,
+                                        ),
+                                        Synerge(
+                                          synergeType: "컬러",
+                                          fortuneCategory: e.name,
+                                        ),
+                                        Synerge(
+                                          synergeType: "물건",
+                                          fortuneCategory: e.name,
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  Synerge(
-                                    synergeType: "컬러",
-                                    fortuneCategory: e.name,
-                                  ),
-                                  Synerge(
-                                    synergeType: "물건",
-                                    fortuneCategory: e.name,
-                                  )
                                 ],
-                              )
-                            ],
-                          ))),
-                )
-                .toList()));
+                              ))),
+                    )
+                    .toList())));
   }
 }

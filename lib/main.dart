@@ -124,6 +124,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
     _controller = FlutterGifController(vsync: this);
     _tabController = TabController(vsync: this, length: getCategories().length);
+    _clearData();
+  }
+
+  _clearData() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.clear();
   }
 
   @override
@@ -150,6 +156,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             centerTitle: false,
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -161,13 +168,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   color: Colors.brown),
             ),
             bottom: TabBar(
-              controller: _tabController,
-              tabs: getCategories()
-                  .map(
-                    (e) => Tab(icon: Icon(Icons.tag_faces), text: e.name),
-                  )
-                  .toList(),
-            ),
+                controller: _tabController,
+                tabs: getCategories()
+                    .map(
+                      (e) => Tab(
+                          icon: Icon(Icons.tag_faces),
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(text: e.name),
+                          )),
+                    )
+                    .toList(),
+                indicator: BoxDecoration(),
+                splashFactory: NoSplash.splashFactory),
           ),
           body: TabBarView(
               controller: _tabController,
@@ -178,11 +191,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   )
                   .toList()),
-          floatingActionButton: FloatingActionButton(
-              onPressed: togglePage,
-              tooltip: 'Increment',
-              child: Text(
-                  getFloatingButtonText())), // This trailing comma makes auto-formatting nicer for build methods.
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: togglePage,
+            tooltip: 'Increment',
+            label: Text(getFloatingButtonText()),
+            backgroundColor: Color.fromARGB(255, 43, 43, 43),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation
+              .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
         ));
   }
 }

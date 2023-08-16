@@ -22,11 +22,13 @@ class FortuneCookie extends StatefulWidget {
   State<FortuneCookie> createState() => _FortuneCookieState();
 }
 
-class _FortuneCookieState extends State<FortuneCookie> {
+class _FortuneCookieState extends State<FortuneCookie>
+    with SingleTickerProviderStateMixin {
   late bool _opened = false;
+  late final AnimationController _controller;
 
   int _counter = 0;
-  void _incrementCounter() {
+  void _incrementCounter() async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -52,42 +54,69 @@ class _FortuneCookieState extends State<FortuneCookie> {
   void initState() {
     super.initState();
     _loadFortuneCookieInfo();
+    _controller = AnimationController(vsync: this);
   }
 
-  SvgPicture _getCookieImage() {
-    if (!_opened) {
-      return SvgPicture.asset("assets/images/fortune_cookie.svg");
-    } else {
+  Widget _getCookieImage() {
+    if (_opened) {
       return SvgPicture.asset("assets/images/fortune_cookie_opened.svg");
+    } else {
+      return _getCookieLottie();
     }
+  }
+
+  LottieBuilder _getCookieLottie() {
+    if (_counter > 3) {
+      return Lottie.asset(
+        'assets/lotties/open.json',
+        repeat: false,
+        controller: _controller,
+        onLoaded: (composition) async {
+          SharedPreferences _prefs = await SharedPreferences.getInstance();
+          await _prefs.setBool(_getOpenedKey(), true);
+        },
+      );
+    } else {
+      return Lottie.asset(
+        'assets/lotties/touch.json',
+        repeat: false,
+        controller: _controller,
+        onLoaded: (composition) {
+          // Configure the AnimationController with the duration of the
+          // Lottie file and start the animation.
+          _controller..duration = composition.duration;
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Column(children: [
-      Lottie.asset('assets/lotties/touch.json'),
-      // Container(
-      //     width: 400,
-      //     height: 400,
-      //     child: IconButton(
-      //         style: const ButtonStyle(iconSize: MaterialStatePropertyAll(400)),
-      //         onPressed: () async {
-      //           SharedPreferences _prefs =
-      //               await SharedPreferences.getInstance();
-      //           if (_opened)
-      //             setState(() {
-      //               _opened = false;
-      //             });
-      //           else
-      //             setState(() {
-      //               _opened = true;
-      //             });
-
-      //           await _prefs.setBool(_getOpenedKey(), _opened);
-      //         },
-      //         icon: _getCookieImage())),
-      Text("오늘 나의 ${widget.fortuneCategory}를 뽑아보세요")
+      Container(
+          width: 400,
+          height: 400,
+          child: IconButton(
+              style: const ButtonStyle(iconSize: MaterialStatePropertyAll(400)),
+              onPressed: () async {
+                _controller.reset();
+                _controller.forward();
+                _incrementCounter();
+              },
+              icon: _getCookieImage())),
+      Text(
+        "오늘 나의 ${widget.fortuneCategory}를\n뽑아보세요",
+        style: TextStyle(fontSize: 32),
+        textAlign: TextAlign.center,
+      )
     ]));
   }
 }
