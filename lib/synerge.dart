@@ -81,7 +81,7 @@ class _SynergeState extends State<Synerge> {
             await _setSynergeInfo();
           },
         ),
-        Text("시너지 ${widget.synergeType}"),
+        Text("시너지\n${widget.synergeType}", style: TextStyle(fontSize: 18)),
       ],
     ));
   }

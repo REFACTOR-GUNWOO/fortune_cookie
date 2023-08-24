@@ -69,11 +69,21 @@ flutter:
     - assets/icons/fortune_cookie.svg
     - assets/gif/fortune_cookie.gif
     - assets/images/background.png
+    - assets/images/result_card.png
     - assets/images/fortune_cookie.svg
     - assets/images/fortune_cookie_opened.svg
     - assets/images/fortune_result_background.svg
     - assets/images/synerge_disabled.svg
     - assets/images/synerge_enabled.svg
+    - assets/images/category/disabled/today.svg
+    - assets/images/category/enabled/today.svg
+    - assets/images/category/disabled/money.svg
+    - assets/images/category/enabled/money.svg
+    - assets/images/category/disabled/people.svg
+    - assets/images/category/enabled/people.svg
+    - assets/images/category/disabled/love.svg
+    - assets/images/category/enabled/love.svg
+    - assets/images/category/selected_mark.svg
     - assets/lotties/touch.json
     - assets/lotties/open.json
   # An image asset can refer to one or more resolution-specific "variants", see

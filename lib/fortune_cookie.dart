@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fortune_cookie_flutter/category.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 
+import 'cookie_open_controller.dart';
+
 class FortuneCookie extends StatefulWidget {
-  final String fortuneCategory;
-  const FortuneCookie({Key? key, required this.fortuneCategory})
-      : super(key: key);
+  final Category category;
+  const FortuneCookie({Key? key, required this.category}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -40,7 +42,7 @@ class _FortuneCookieState extends State<FortuneCookie>
   }
 
   String _getOpenedKey() {
-    return "${widget.fortuneCategory}.fortueCookie.opened";
+    return "${widget.category.name}.fortueCookie.opened";
   }
 
   _loadFortuneCookieInfo() async {
@@ -74,6 +76,7 @@ class _FortuneCookieState extends State<FortuneCookie>
         onLoaded: (composition) async {
           SharedPreferences _prefs = await SharedPreferences.getInstance();
           await _prefs.setBool(_getOpenedKey(), true);
+          CookieOpenController().setCookieOpenState(widget.category);
         },
       );
     } else {
@@ -113,7 +116,7 @@ class _FortuneCookieState extends State<FortuneCookie>
               },
               icon: _getCookieImage())),
       Text(
-        "오늘 나의 ${widget.fortuneCategory}를\n뽑아보세요",
+        "오늘 나의 ${widget.category.name}를\n뽑아보세요",
         style: TextStyle(fontSize: 32),
         textAlign: TextAlign.center,
       )

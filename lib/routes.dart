@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune_cookie_flutter/fortune_result.dart';
+import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
 import 'package:fortune_cookie_flutter/result_page.dart';
 import 'package:fortune_cookie_flutter/retry_ad.dart';
 
@@ -14,7 +14,7 @@ class Routes {
 
   static final routes = <String, WidgetBuilder>{
     resultPage: (BuildContext context) => ResultPage(),
-    fortuneResult: (BuildContext context) => FortuneResult(),
+    fortuneResult: (BuildContext context) => FortuneResultLayout(),
     mainPage: (BuildContext context) => MyApp()
   };
 }

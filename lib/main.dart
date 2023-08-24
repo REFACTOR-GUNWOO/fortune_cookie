@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'cookie_open_controller.dart';
 import 'category.dart';
+import 'category_icon.dart';
 import 'fortune_cookie.dart';
 
 void main() {
@@ -67,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool _showTooltip = true;
   bool enableTouchFortuneCookie = true;
   bool showResultPage = false;
+  int _currentTabIndex = 0;
   late TabController _tabController;
 
   void togglePage() {
@@ -106,6 +109,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         Navigator.pushNamed(context, '/resultPage');
         _counter = 0;
       }
+    });
+  }
+
+  void setCurrentTabIndex(int index) {
+    setState(() {
+      _currentTabIndex = index;
     });
   }
 
@@ -168,15 +177,37 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   color: Colors.brown),
             ),
             bottom: TabBar(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                labelPadding: EdgeInsets.symmetric(horizontal: 10),
                 controller: _tabController,
+                onTap: (index) => setCurrentTabIndex(index),
                 tabs: getCategories()
                     .map(
                       (e) => Tab(
-                          icon: Icon(Icons.tag_faces),
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(text: e.name),
-                          )),
+                        height: 150,
+                        icon: ValueListenableBuilder(
+                            valueListenable: CookieOpenController(),
+                            builder: (BuildContext context,
+                                List<Category> value, Widget? child) {
+                              print(value);
+                              return FortuneCategoryIcon(
+                                  fortuneCategory: e,
+                                  checked:
+                                      (getCategories()[_currentTabIndex].name ==
+                                              e.name) ||
+                                          value.any((it) => it.name == e.name),
+                                  alwaysOpen: false);
+                            }),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              text: e.name,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                  fontFamily: "Suite")),
+                        ),
+                      ),
                     )
                     .toList(),
                 indicator: BoxDecoration(),
@@ -187,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               children: getCategories()
                   .map(
                     (e) => FortuneCookie(
-                      fortuneCategory: e.name,
+                      category: e,
                     ),
                   )
                   .toList()),
