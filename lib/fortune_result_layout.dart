@@ -54,9 +54,19 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
       Navigator.pushNamed(context, '/');
     }
 
-    final int categoryIndex =
-        (ModalRoute.of(context)!.settings.arguments ?? 0) as int;
-    _tabController.animateTo(categoryIndex);
+    final Category? category = (ModalRoute.of(context)!.settings.arguments
+            as FortuneResultRouteArguments?)
+        ?.category;
+
+    if (category != null) {
+      _tabController.animateTo(
+          getCategories().indexWhere((e) => e.name == category.name) ?? 0);
+    }
+
+    final bool byCookieOpen = (ModalRoute.of(context)!.settings.arguments
+                as FortuneResultRouteArguments?)
+            ?.byCookieOpen ??
+        false;
 
     return Container(
         decoration: const BoxDecoration(
@@ -78,7 +88,15 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
             body: TabBarView(
                 controller: _tabController,
                 children: categories
-                    .map((e) => FortuneResult(fortuneCategory: e))
+                    .map((e) => FortuneResult(
+                        fortuneCategory: e, byCookieOpen: byCookieOpen))
                     .toList())));
   }
+}
+
+class FortuneResultRouteArguments {
+  final Category category;
+  final bool byCookieOpen;
+
+  FortuneResultRouteArguments(this.category, this.byCookieOpen);
 }

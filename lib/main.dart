@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gif/flutter_gif.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
 import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -74,7 +75,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   void togglePage() {
     Navigator.pushNamed(context, '/fortuneResult',
-        arguments: _tabController.index);
+        arguments: FortuneResultRouteArguments(
+            getCategories()[_tabController.index], false));
   }
 
   String getFloatingButtonText() {
@@ -87,32 +89,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
   }
 
-  void _incrementCounter() {
-    setState(() {
-      if (!enableTouchFortuneCookie) {
-        print("object");
-        return;
-      }
-      _counter++;
-
-      _animationController.reset();
-      _animationController.forward();
-      enableTouchFortuneCookie = false;
-      TickerFuture future = _controller.animateBack(15,
-          duration: const Duration(milliseconds: 500));
-      future.whenComplete(() => {
-            enableTouchFortuneCookie = true,
-            _controller.animateBack(0,
-                duration: const Duration(milliseconds: 500))
-          });
-      if (_counter > 10) {
-        Navigator.pushNamed(context, '/resultPage');
-        _counter = 0;
-      }
-    });
-  }
-
   void setCurrentTabIndex(int index) {
+    print(index);
     setState(() {
       _currentTabIndex = index;
     });
@@ -133,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
     _controller = FlutterGifController(vsync: this);
     _tabController = TabController(vsync: this, length: getCategories().length);
+    _tabController.addListener(onTabSwiped);
     _clearData();
   }
 
@@ -147,6 +126,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void onTabSwiped() {
+    if (_tabController.index != _tabController.previousIndex)
+      // Tab Changed swiping to a new tab
+      setCurrentTabIndex(_tabController.index);
+  }
+
+  AssetImage getBackgroundByTab(int index) {
+    return AssetImage("assets/images/background${index + 1}.png");
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -156,9 +145,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
+            image: getBackgroundByTab(_tabController.index),
             fit: BoxFit.cover,
           ),
         ),
@@ -180,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 padding: EdgeInsets.symmetric(horizontal: 50),
                 labelPadding: EdgeInsets.symmetric(horizontal: 10),
                 controller: _tabController,
-                onTap: (index) => setCurrentTabIndex(index),
+                onTap: (index) => {setCurrentTabIndex(index)},
                 tabs: getCategories()
                     .map(
                       (e) => Tab(

@@ -68,7 +68,10 @@ flutter:
   assets:
     - assets/icons/fortune_cookie.svg
     - assets/gif/fortune_cookie.gif
-    - assets/images/background.png
+    - assets/images/background1.png
+    - assets/images/background2.png
+    - assets/images/background3.png
+    - assets/images/background4.png
     - assets/images/result_card.png
     - assets/images/fortune_cookie.svg
     - assets/images/fortune_cookie_opened.svg
@@ -86,6 +89,7 @@ flutter:
     - assets/images/category/selected_mark.svg
     - assets/lotties/touch.json
     - assets/lotties/open.json
+    - assets/lotties/firecrakers.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

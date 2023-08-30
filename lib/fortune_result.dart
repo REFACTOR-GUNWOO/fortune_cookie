@@ -11,7 +11,9 @@ import 'category.dart';
 
 class FortuneResult extends StatefulWidget {
   final Category fortuneCategory;
-  const FortuneResult({Key? key, required this.fortuneCategory})
+  final bool byCookieOpen;
+  const FortuneResult(
+      {Key? key, required this.fortuneCategory, required this.byCookieOpen})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -127,15 +129,15 @@ class _FortuneResultState extends State<FortuneResult>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Synerge(
-                  synergeType: "장소",
+                  synergeType: SynergeType.place,
                   fortuneCategory: widget.fortuneCategory.name,
                 ),
                 Synerge(
-                  synergeType: "컬러",
+                  synergeType: SynergeType.color,
                   fortuneCategory: widget.fortuneCategory.name,
                 ),
                 Synerge(
-                  synergeType: "물건",
+                  synergeType: SynergeType.stuff,
                   fortuneCategory: widget.fortuneCategory.name,
                 )
               ],

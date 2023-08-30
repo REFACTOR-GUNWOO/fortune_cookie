@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/category.dart';
@@ -6,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 
 import 'cookie_open_controller.dart';
+import 'fortune_result_layout.dart';
 
 class FortuneCookie extends StatefulWidget {
   final Category category;
@@ -77,6 +80,14 @@ class _FortuneCookieState extends State<FortuneCookie>
           SharedPreferences _prefs = await SharedPreferences.getInstance();
           await _prefs.setBool(_getOpenedKey(), true);
           CookieOpenController().setCookieOpenState(widget.category);
+          _controller.addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              sleep(Duration(milliseconds: 500));
+              Navigator.pushNamed(context, '/fortuneResult',
+                  arguments:
+                      FortuneResultRouteArguments(widget.category, true));
+            }
+          });
         },
       );
     } else {
