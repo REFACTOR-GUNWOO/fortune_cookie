@@ -9,18 +9,13 @@ class SynergeOpenEffect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Center(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        ModalBarrier(),
-        Center(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Lottie.asset("assets/lotties/firecrakers.json", repeat: false)
-          ],
-        )),
+        Lottie.asset("assets/lotties/firecrakers.json", repeat: false)
       ],
-    );
+    ));
   }
 }

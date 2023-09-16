@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fortune_cookie_flutter/GSheetApiConfig.dart';
 import 'package:fortune_cookie_flutter/retry_ad.dart';
+import 'package:fortune_cookie_flutter/synerge_open_effect.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'loading.dart';
 
 class Synerge extends StatefulWidget {
   final SynergeType synergeType;
   final String fortuneCategory;
+  final bool cookieOpened;
   const Synerge(
-      {Key? key, required this.fortuneCategory, required this.synergeType})
+      {Key? key,
+      required this.fortuneCategory,
+      required this.synergeType,
+      required this.cookieOpened})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -27,19 +35,30 @@ class Synerge extends StatefulWidget {
 class _SynergeState extends State<Synerge> {
   bool enabled = false;
   String? value;
+  String? color;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _loadSynergeInfo();
+    initializeFortuneRepository();
+  }
+
+  initializeFortuneRepository() async {
+    await SynergeRepository.initalWorkSheet();
   }
 
   String _getEnableKey() {
-    return "${widget.fortuneCategory}${widget.synergeType}/enbaled";
+    return " ${widget.fortuneCategory}${widget.synergeType}/enbaled";
   }
 
   String _getSynergeValueKey() {
     return "${widget.fortuneCategory}/${widget.synergeType}/value";
+  }
+
+  String _getSynergeColorKey() {
+    return "${widget.fortuneCategory}/${widget.synergeType}/value/color";
   }
 
   _loadSynergeInfo() async {
@@ -47,6 +66,7 @@ class _SynergeState extends State<Synerge> {
     setState(() {
       enabled = (prefs.getBool(_getEnableKey()) ?? false);
       value = (prefs.getString(_getSynergeValueKey()));
+      color = (prefs.getString(_getSynergeColorKey()));
     });
   }
 
@@ -56,24 +76,40 @@ class _SynergeState extends State<Synerge> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 254, 249, 230),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0), // 원하는 둥근 테두리 반지름 설정
+            ),
+            contentPadding: EdgeInsets.only(
+                top: 24, bottom: 53, left: 24, right: 24), // 위, 오른쪽, 아래, 왼쪽 순서
+
+            backgroundColor: Color.fromARGB(255, 254, 249, 230),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      "assets/icons/close.svg",
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
-              ),
-              Text('시너지 ${getSynergeLabel(synerge.type)}'),
-              getSynergeResult(synerge)
-            ],
-          ),
-        );
+                Container(
+                  child: Text(
+                    '시너지 ${getSynergeLabel(synerge.type)}',
+                    style: TextStyle(color: Color(0xFF7F7E7A), fontSize: 18),
+                  ),
+                  margin: EdgeInsets.only(top: 8),
+                ),
+                Container(
+                  child: getSynergeResult(synerge),
+                  margin: EdgeInsets.only(top: 8),
+                )
+              ],
+            ));
       },
     );
   }
@@ -81,31 +117,25 @@ class _SynergeState extends State<Synerge> {
   Future<void> _showSynergeOpenEffect() async {
     showDialog<void>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return AlertDialog(
-            backgroundColor: Colors.transparent,
-            content: Center(
-              child: Container(
-                  width: 200,
-                  height: 200,
-                  child: Lottie.asset("assets/lotties/firecrakers.json",
-                      repeat: false)),
-            ));
+        return SynergeOpenEffect();
       },
     );
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 2), () {
       Navigator.of(context).pop();
     });
   }
 
   _setSynergeInfo(SynergeType type) async {
     // if (enabled) return;
+    // await Loading.start(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await showRewardFullBanner(() {
-      BaseSynerge synerge = getSynerge(type);
+    await showRewardFullBanner(() async {
+      // Loading.end(context);
+      BaseSynerge synerge = await getSynerge(type);
       /**
        * 각각의 시너지별 결과값 가져와서 저장
        */
@@ -117,8 +147,16 @@ class _SynergeState extends State<Synerge> {
         setState(() {
           enabled = true;
           value = synerge.value;
+          if (type == SynergeType.color) {
+            color = (synerge as ColorSynerge).color;
+          }
         });
         prefs.setString(_getSynergeValueKey(), synerge.value);
+        if (type == SynergeType.color) {
+          print("test${(synerge as ColorSynerge).color}");
+          prefs.setString(
+              _getSynergeColorKey(), (synerge as ColorSynerge).color);
+        }
       }
       prefs.setBool(_getEnableKey(), enabled);
       _showMyDialog(synerge);
@@ -134,99 +172,145 @@ class _SynergeState extends State<Synerge> {
     }
   }
 
-  Container getSynergeResult(BaseSynerge synerge) {
+  Widget getSynergeResult(BaseSynerge synerge) {
     if (synerge.type == SynergeType.color) {
-      return Container(
-          child: Stack(alignment: Alignment.center, children: [
-        Positioned(
-            top: 10,
-            child: Container(
-              width: 40,
-              height: 30,
-              color: Colors.pink,
-            )),
-        Text(value ?? "", style: TextStyle(fontSize: 18)),
-      ]));
+      int intValue = int.tryParse("$color", radix: 16) ?? 0;
+      return Column(children: [
+        SvgPicture.asset(
+          "assets/images/color.svg",
+          color: Color(intValue).withOpacity(1),
+          width: 78,
+          fit: BoxFit.cover,
+        ),
+        Text(value ?? "",
+            style: TextStyle(fontSize: 24, color: Color(0xFF33322E))),
+      ]);
     }
     if (synerge.type == SynergeType.place) {
       return Container(
-          child: Text(value ?? "", style: TextStyle(fontSize: 18)));
+        child: Text(value ?? "",
+            style: TextStyle(fontSize: 24, color: Color(0xFF33322E))),
+      );
     }
     if (synerge.type == SynergeType.stuff) {
       return Container(
-          child: Text(value ?? "", style: TextStyle(fontSize: 18)));
+        child: Text(value ?? "",
+            style: TextStyle(fontSize: 24, color: Color(0xFF33322E))),
+      );
+    }
+    throw Error();
+  }
+
+  Widget getSynergeResultWidget(SynergeType synergeType) {
+    if (synergeType == SynergeType.color) {
+      int intValue = int.tryParse("$color", radix: 16) ?? 0;
+      return Stack(alignment: Alignment.center, children: [
+        Positioned(
+            child: SvgPicture.asset(
+          "assets/images/color.svg",
+          color: Color(intValue).withOpacity(1),
+          width: 55,
+          fit: BoxFit.cover,
+        )),
+        Text(value ?? "",
+            style: TextStyle(fontSize: 20, color: Color(0xFF33322E))),
+      ]);
+    }
+    if (synergeType == SynergeType.place) {
+      return Container(
+          child: Text(value ?? "",
+              style: TextStyle(fontSize: 20, color: Color(0xFF33322E))));
+    }
+    if (synergeType == SynergeType.stuff) {
+      return Container(
+          child: Text(value ?? "",
+              style: TextStyle(fontSize: 20, color: Color(0xFF33322E))));
     }
 
     throw Error();
   }
 
-  Container getSynergeResultWidget(SynergeType synergeType) {
-    if (synergeType == SynergeType.color) {
-      return Container(
-          child: Stack(alignment: Alignment.center, children: [
-        Positioned(
-            top: 10,
-            child: Container(
-              width: 40,
-              height: 30,
-              color: Colors.pink,
-            )),
-        Text(value ?? "", style: TextStyle(fontSize: 18)),
-      ]));
-    }
-    if (synergeType == SynergeType.place) {
-      return Container(
-          child: Text(value ?? "", style: TextStyle(fontSize: 18)));
-    }
-    if (synergeType == SynergeType.stuff) {
-      return Container(
-          child: Text(value ?? "", style: TextStyle(fontSize: 18)));
-    }
+  Widget getWidgetWithLoading() {
+    if (isLoading) {
+      return CircularProgressIndicator();
+    } else {
+      return Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            alignment: Alignment.center,
+            child: value == null
+                ? IconButton(
+                    icon: _getSynergeImage(),
+                    iconSize: 72,
+                    onPressed: () async {
+                      if (!widget.cookieOpened) {
+                        toast(context, "운세를 먼저 확인해주세요");
+                        return;
+                      }
 
-    throw Error();
+                      await _setSynergeInfo(widget.synergeType);
+                    },
+                  )
+                : getSynergeResultWidget(widget.synergeType),
+          ),
+          RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                  text: "시너지\n${getSynergeLabel(widget.synergeType)}",
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 127, 126, 122),
+                      fontFamily: "Suite")))
+        ],
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-      children: [
-        Container(
-          alignment: Alignment.center,
-          width: 100,
-          height: 100,
-          child: value == null
-              ? IconButton(
-                  icon: _getSynergeImage(),
-                  iconSize: 50,
-                  onPressed: () async {
-                    await _setSynergeInfo(widget.synergeType);
-                  },
-                )
-              : getSynergeResultWidget(widget.synergeType),
+    return Container(width: 80, height: 140, child: getWidgetWithLoading());
+  }
+
+  void toast(context, text) {
+    final fToast = FToast();
+    fToast.init(context);
+    Widget toast = Container(
+      margin: EdgeInsets.only(left: 20, right: 20, bottom: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        color: Color(0xFF2b2b2b),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0), // 내용에 패딩을 추가합니다.
+        child: Text(
+          text,
+          style: TextStyle(color: Colors.white, fontSize: 16),
+          textAlign: TextAlign.center,
         ),
-        Text("시너지\n${getSynergeLabel(widget.synergeType)}",
-            style: TextStyle(fontSize: 18)),
-      ],
-    ));
+      ),
+    );
+
+    fToast.showToast(
+        child: toast,
+        toastDuration: const Duration(seconds: 1),
+        positionedToastBuilder: (context, child) {
+          return Positioned(
+            child: child,
+            left: 20, // 좌우 마진만 적용
+            right: 20,
+            bottom: 40,
+          );
+        });
   }
 }
 
 /**
  * 여기서 각 시너지 랜덤으로 받도록
  */
-BaseSynerge getSynerge(SynergeType synergeType) {
-  if (synergeType == SynergeType.color) {
-    return ColorSynerge("분홍색", "분홍");
-  }
-  if (synergeType == SynergeType.place) {
-    return PlaceSynerge("영화관");
-  }
-  if (synergeType == SynergeType.stuff) {
-    return StuffSynerge("포크");
-  }
-
-  throw Error();
+Future<BaseSynerge> getSynerge(SynergeType synergeType) async {
+  return await SynergeRepository().getSynerge(synergeType);
 }
 
 String getSynergeLabel(SynergeType synergeType) {

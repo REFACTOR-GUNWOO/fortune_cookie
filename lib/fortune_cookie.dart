@@ -1,13 +1,13 @@
 import 'dart:io';
-
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/category.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
-
 import 'cookie_open_controller.dart';
+import 'GSheetApiConfig.dart';
 import 'fortune_result_layout.dart';
 
 class FortuneCookie extends StatefulWidget {
@@ -64,35 +64,18 @@ class _FortuneCookieState extends State<FortuneCookie>
 
   Widget _getCookieImage() {
     if (_opened) {
-      return SvgPicture.asset("assets/images/fortune_cookie_opened.svg");
+      return Lottie.asset(
+          'assets/lotties/cookie/${widget.category.code}/d.json',
+          repeat: false);
     } else {
       return _getCookieLottie();
     }
   }
 
   LottieBuilder _getCookieLottie() {
-    if (_counter > 3) {
+    if (_counter < 5) {
       return Lottie.asset(
-        'assets/lotties/open.json',
-        repeat: false,
-        controller: _controller,
-        onLoaded: (composition) async {
-          SharedPreferences _prefs = await SharedPreferences.getInstance();
-          await _prefs.setBool(_getOpenedKey(), true);
-          CookieOpenController().setCookieOpenState(widget.category);
-          _controller.addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              sleep(Duration(milliseconds: 500));
-              Navigator.pushNamed(context, '/fortuneResult',
-                  arguments:
-                      FortuneResultRouteArguments(widget.category, true));
-            }
-          });
-        },
-      );
-    } else {
-      return Lottie.asset(
-        'assets/lotties/touch.json',
+        'assets/lotties/cookie/${widget.category.code}/a.json',
         repeat: false,
         controller: _controller,
         onLoaded: (composition) {
@@ -101,6 +84,62 @@ class _FortuneCookieState extends State<FortuneCookie>
           _controller..duration = composition.duration;
         },
       );
+    } else if (_counter < 10) {
+      return Lottie.asset(
+        'assets/lotties/cookie/${widget.category.code}/b.json',
+        repeat: false,
+        controller: _controller,
+        onLoaded: (composition) {
+          // Configure the AnimationController with the duration of the
+          // Lottie file and start the animation.
+          _controller..duration = composition.duration;
+        },
+      );
+    } else if (_counter < 15) {
+      return Lottie.asset(
+        'assets/lotties/cookie/${widget.category.code}/c.json',
+        repeat: false,
+        controller: _controller,
+        onLoaded: (composition) {
+          // Configure the AnimationController with the duration of the
+          // Lottie file and start the animation.
+          _controller..duration = composition.duration;
+        },
+      );
+    } else {
+      return Lottie.asset(
+        'assets/lotties/cookie/${widget.category.code}/d.json',
+        repeat: false,
+        controller: _controller,
+        onLoaded: (composition) async {
+          SharedPreferences _prefs = await SharedPreferences.getInstance();
+          await _prefs.setBool(_getOpenedKey(), true);
+          CookieOpenController().setCookieOpenState(widget.category);
+          _controller.addStatusListener((status) async {
+            if (status == AnimationStatus.completed) {
+              await setFortuneResult(widget.category);
+              sleep(Duration(milliseconds: 300));
+              Navigator.pushNamed(context, '/fortuneResult',
+                  arguments:
+                      FortuneResultRouteArguments(widget.category, true));
+            }
+          });
+        },
+      );
+    }
+  }
+
+  Future<String> setFortuneResult(Category category) async {
+    // if (!_opened) return;
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String? saved = _prefs.getString("${category.name}.fortueCookie.result");
+    print(saved);
+    if (saved == null) {
+      String fortune = await FortuneRepository().getFortune(category);
+      _prefs.setString("${category.name}.fortueCookie.result", fortune);
+      return fortune;
+    } else {
+      return saved;
     }
   }
 
@@ -111,26 +150,45 @@ class _FortuneCookieState extends State<FortuneCookie>
     _controller.dispose();
   }
 
+  String getTitle() {
+    if (widget.category.name == "오늘의 운세")
+      return "오늘 나의 운세를\n뽑아보세요";
+    else
+      return "오늘 나의 ${widget.category.name}를\n뽑아보세요";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(children: [
-      Container(
-          width: 400,
-          height: 400,
+        child: Stack(children: [
+      Positioned(
+          left: 0,
+          right: 0,
           child: IconButton(
-              style: const ButtonStyle(iconSize: MaterialStatePropertyAll(400)),
+              iconSize: 350,
               onPressed: () async {
+                if (_opened) {
+                  return;
+                }
+
+                if (_counter == 15) {
+                  return;
+                }
+                HapticFeedback.heavyImpact();
                 _controller.reset();
                 _controller.forward();
                 _incrementCounter();
               },
               icon: _getCookieImage())),
-      Text(
-        "오늘 나의 ${widget.category.name}를\n뽑아보세요",
-        style: TextStyle(fontSize: 32),
-        textAlign: TextAlign.center,
-      )
+      Positioned(
+          left: 0,
+          right: 0,
+          top: 320,
+          child: Text(
+            getTitle(),
+            style: TextStyle(fontSize: 32),
+            textAlign: TextAlign.center,
+          ))
     ]));
   }
 }

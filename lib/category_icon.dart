@@ -50,7 +50,7 @@ class _FortuneCategoryIconState extends State<FortuneCategoryIcon>
   }
 
   Widget _getCategoryImage() {
-    if (_opened || widget.alwaysOpen) {
+    if (!_opened || widget.alwaysOpen) {
       if (widget.checked) {
         return Stack(children: [
           SvgPicture.asset(widget.fortuneCategory.enabledIconPath),
@@ -78,7 +78,8 @@ class _FortuneCategoryIconState extends State<FortuneCategoryIcon>
               child: Align(
                 alignment: Alignment.center,
                 child: SvgPicture.asset(
-                    "assets/images/category/selected_mark.svg"),
+                  "assets/images/category/selected_mark.svg",
+                ),
               ))
         ]);
       } else {

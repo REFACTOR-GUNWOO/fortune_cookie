@@ -41,6 +41,11 @@ dependencies:
   flutter_gif: any
   shared_preferences: ^2.2.0
   lottie: ^2.6.0
+  flutter_local_notifications: ^15.1.1
+  permission_handler: ^10.4.3
+  visibility_detector: ^0.3.3
+  gsheets: ^0.5.0
+  fluttertoast: ^8.0.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -67,17 +72,19 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/fortune_cookie.svg
+    - assets/icons/close.svg
+    - assets/icons/setting.svg
     - assets/gif/fortune_cookie.gif
+    - assets/images/setting_background.png
     - assets/images/background1.png
     - assets/images/background2.png
     - assets/images/background3.png
     - assets/images/background4.png
     - assets/images/result_card.png
-    - assets/images/fortune_cookie.svg
-    - assets/images/fortune_cookie_opened.svg
     - assets/images/fortune_result_background.svg
     - assets/images/synerge_disabled.svg
     - assets/images/synerge_enabled.svg
+    - assets/images/color.svg
     - assets/images/category/disabled/today.svg
     - assets/images/category/enabled/today.svg
     - assets/images/category/disabled/money.svg
@@ -87,8 +94,32 @@ flutter:
     - assets/images/category/disabled/love.svg
     - assets/images/category/enabled/love.svg
     - assets/images/category/selected_mark.svg
+    - assets/images/cookie/today/default.svg
+    - assets/images/cookie/today/opened.svg
+    - assets/images/cookie/money/default.svg
+    - assets/images/cookie/money/opened.svg
+    - assets/images/cookie/love/default.svg
+    - assets/images/cookie/love/opened.svg
+    - assets/images/cookie/people/default.svg
+    - assets/images/cookie/people/opened.svg
     - assets/lotties/touch.json
     - assets/lotties/open.json
+    - assets/lotties/cookie/today/a.json
+    - assets/lotties/cookie/today/b.json
+    - assets/lotties/cookie/today/c.json
+    - assets/lotties/cookie/today/d.json
+    - assets/lotties/cookie/love/a.json
+    - assets/lotties/cookie/love/b.json
+    - assets/lotties/cookie/love/c.json
+    - assets/lotties/cookie/love/d.json
+    - assets/lotties/cookie/people/a.json
+    - assets/lotties/cookie/people/b.json
+    - assets/lotties/cookie/people/c.json
+    - assets/lotties/cookie/people/d.json
+    - assets/lotties/cookie/money/a.json
+    - assets/lotties/cookie/money/b.json
+    - assets/lotties/cookie/money/c.json
+    - assets/lotties/cookie/money/d.json
     - assets/lotties/firecrakers.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_gif/flutter_gif.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
+import 'package:fortune_cookie_flutter/local_notification_service.dart';
 import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cookie_open_controller.dart';
+import 'GSheetApiConfig.dart';
 import 'category.dart';
 import 'category_icon.dart';
 import 'fortune_cookie.dart';
 
-void main() {
+LocalNotificationService localNotificationService = LocalNotificationService();
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-
-  // final pref = await SharedPreferences.getInstance();
-  // await pref.clear();
-
+  await localNotificationService.setup();
+  debugPaintSizeEnabled = true;
+  final pref = await SharedPreferences.getInstance();
+  // String? lastOpenDateString = await pref.getString("last-open-date");
+  // if(lastOpenDateString != null){
+  // DateTime lastOpenDate =
+  //     DateFormat("yyyy-MM-dd").parse(lastOpenDateString);
+  //   if(lastOpenDate)
+  // }
+  await pref.clear();
   runApp(const MyApp());
 }
 
@@ -112,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _controller = FlutterGifController(vsync: this);
     _tabController = TabController(vsync: this, length: getCategories().length);
     _tabController.addListener(onTabSwiped);
-    _clearData();
+    // _clearData();
   }
 
   _clearData() async {
@@ -158,45 +170,52 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             centerTitle: false,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: const Text(
-              'forture for future',
-              style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20,
-                  color: Colors.brown),
-            ),
             bottom: TabBar(
-                padding: EdgeInsets.symmetric(horizontal: 50),
+                padding: EdgeInsets.symmetric(horizontal: 40),
                 labelPadding: EdgeInsets.symmetric(horizontal: 10),
                 controller: _tabController,
                 onTap: (index) => {setCurrentTabIndex(index)},
                 tabs: getCategories()
                     .map(
                       (e) => Tab(
-                        height: 150,
-                        icon: ValueListenableBuilder(
-                            valueListenable: CookieOpenController(),
-                            builder: (BuildContext context,
-                                List<Category> value, Widget? child) {
-                              print(value);
-                              return FortuneCategoryIcon(
-                                  fortuneCategory: e,
-                                  checked:
-                                      (getCategories()[_currentTabIndex].name ==
-                                              e.name) ||
-                                          value.any((it) => it.name == e.name),
-                                  alwaysOpen: false);
-                            }),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              text: e.name,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                  fontFamily: "Suite")),
-                        ),
-                      ),
+                          height: 130,
+                          icon: ValueListenableBuilder(
+                              valueListenable: CookieOpenController(),
+                              builder: (BuildContext context,
+                                  List<Category> value, Widget? child) {
+                                return FortuneCategoryIcon(
+                                    fortuneCategory: e,
+                                    checked: (getCategories()[_currentTabIndex]
+                                                .name ==
+                                            e.name) ||
+                                        value.any((it) => it.name == e.name),
+                                    alwaysOpen: false);
+                              }),
+                          child: SizedBox(
+                              height: 40,
+                              width: 100,
+                              child: Center(
+                                  child: Text(
+                                e.tabName,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontFamily: "Suite"),
+                                textAlign: TextAlign.center,
+                              )
+
+                                  //  RichText(
+                                  //     textAlign: TextAlign.center,
+                                  //     overflow: TextOverflow.visible,
+                                  //     text: TextSpan(
+                                  //       text: e.name,
+                                  //       style: TextStyle(
+                                  //           fontSize: 18,
+                                  //           color: Colors.black,
+                                  //           fontFamily: "Suite"),
+                                  //     ))
+
+                                  ))),
                     )
                     .toList(),
                 indicator: BoxDecoration(),
@@ -211,12 +230,35 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                   )
                   .toList()),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: togglePage,
-            tooltip: 'Increment',
-            label: Text(getFloatingButtonText()),
-            backgroundColor: Color.fromARGB(255, 43, 43, 43),
-          ),
+          floatingActionButton: Stack(children: [
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                  width: 180,
+                  child: FloatingActionButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(50.0), // 원하는 모양 및 크기 설정
+                    ),
+                    child: Text(
+                      getFloatingButtonText(),
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    onPressed: togglePage,
+                    tooltip: 'Increment',
+                    backgroundColor: Color.fromARGB(255, 43, 43, 43),
+                    heroTag: null,
+                  )),
+            ),
+            Positioned(
+                top: 100,
+                right: 10,
+                child: IconButton(
+                    icon: SvgPicture.asset("assets/icons/setting.svg"),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/setting');
+                    }))
+          ]),
           floatingActionButtonLocation: FloatingActionButtonLocation
               .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
         ));

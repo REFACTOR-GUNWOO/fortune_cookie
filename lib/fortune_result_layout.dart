@@ -8,7 +8,10 @@ import 'category.dart';
 
 class FortuneResultLayout extends StatefulWidget {
   // final String fortuneCategory;
-  const FortuneResultLayout({Key? key}) : super(key: key);
+  final Category targetCategory;
+  const FortuneResultLayout(Category? category,
+      {Key? key, required this.targetCategory})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -39,6 +42,7 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
 
   late TabController _tabController;
   List<Category> categories = getCategories();
+  int _currentTabIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -46,6 +50,24 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
     // SingleTickerProviderStateMixin를 상속 받아서
     // vsync에 this 형태로 전달해야 애니메이션이 정상 처리된다.
     _tabController = TabController(vsync: this, length: getCategories().length);
+    _tabController.addListener(onTabSwiped);
+    if (widget.targetCategory != null) {
+      _tabController.animateTo(getCategories()
+              .indexWhere((e) => e.name == widget.targetCategory.name) ??
+          0);
+    }
+  }
+
+  AssetImage getBackgroundByTab(int index) {
+    return AssetImage("assets/images/background${index + 1}.png");
+  }
+
+  void onTabSwiped() {
+    if (_tabController.index != _tabController.previousIndex) {
+      setState(() {
+        _currentTabIndex = _tabController.index;
+      });
+    }
   }
 
   @override
@@ -54,35 +76,34 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
       Navigator.pushNamed(context, '/');
     }
 
-    final Category? category = (ModalRoute.of(context)!.settings.arguments
-            as FortuneResultRouteArguments?)
-        ?.category;
-
-    if (category != null) {
-      _tabController.animateTo(
-          getCategories().indexWhere((e) => e.name == category.name) ?? 0);
-    }
-
     final bool byCookieOpen = (ModalRoute.of(context)!.settings.arguments
                 as FortuneResultRouteArguments?)
             ?.byCookieOpen ??
         false;
 
     return Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
+            image: getBackgroundByTab(_currentTabIndex),
             fit: BoxFit.cover,
           ),
         ),
         child: Scaffold(
             backgroundColor: Colors.transparent,
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: togglePage,
-              tooltip: 'Increment',
-              label: Text("운세 뽑으러 가기"),
-              backgroundColor: Color.fromARGB(255, 43, 43, 43),
-            ),
+            floatingActionButton: Container(
+                width: 180,
+                child: FloatingActionButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50.0), // 원하는 모양 및 크기 설정
+                  ),
+                  child: Text(
+                    "운세 뽑으러 가기",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  onPressed: togglePage,
+                  tooltip: 'Increment',
+                  backgroundColor: Color.fromARGB(255, 43, 43, 43),
+                )),
             floatingActionButtonLocation: FloatingActionButtonLocation
                 .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
             body: TabBarView(

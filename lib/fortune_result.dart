@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fortune_cookie_flutter/GSheetApiConfig.dart';
 import 'package:fortune_cookie_flutter/category_icon.dart';
+import 'package:fortune_cookie_flutter/stroke_text.dart';
 import 'package:fortune_cookie_flutter/synerge.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +35,7 @@ class _FortuneResultState extends State<FortuneResult>
     with TickerProviderStateMixin {
   bool _opened = false;
   late Timer _timer;
+  late String fortuneResult = "?";
   DateTime _now = DateTime.now();
   @override
   void initState() {
@@ -44,6 +47,39 @@ class _FortuneResultState extends State<FortuneResult>
         _now = DateTime.now();
       });
     });
+    initializeFortuneRepository();
+    initializeFortuneResult();
+  }
+
+  initializeFortuneRepository() async {
+    await FortuneRepository.initalWorkSheet();
+  }
+
+  initializeFortuneResult() async {
+    // if (!_opened) return;
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String? saved =
+        _prefs.getString("${widget.fortuneCategory.name}.fortueCookie.result");
+    print(saved);
+    if (saved == null) {
+      String fortune =
+          await FortuneRepository().getFortune(widget.fortuneCategory);
+      _prefs.setString(
+          "${widget.fortuneCategory.name}.fortueCookie.result", fortune);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        fortuneResult = fortune;
+      });
+    } else {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        fortuneResult = saved;
+      });
+    }
   }
 
   @override
@@ -63,20 +99,13 @@ class _FortuneResultState extends State<FortuneResult>
 
   Widget getResultWidget() {
     if (_opened) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("확신이 서지 않아\n힘든 날이군요", style: TextStyle(fontSize: 20)),
-        ],
+      return Text(
+        fortuneResult,
+        style: TextStyle(fontSize: 20, color: Color(0xFF4A4941)),
+        textAlign: TextAlign.center,
       );
-    } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("운세를 뽑아보세요", style: TextStyle(fontSize: 20)),
-        ],
-      );
-    }
+    } else
+      return Text("?", style: TextStyle(fontSize: 20));
   }
 
   String getTimerString() {
@@ -87,7 +116,7 @@ class _FortuneResultState extends State<FortuneResult>
         tomorrowStartTime.difference(_now).inHours.toString();
     int differenceMinute = tomorrowStartTime.difference(_now).inMinutes % 60;
     int differenceSecond = tomorrowStartTime.difference(_now).inSeconds % 60;
-    return "${differenceHour}시간 ${differenceMinute}분 ${differenceSecond}초 뒤\n운세가 초기화돼요";
+    return "${differenceHour}시간 ${differenceMinute}분 ${differenceSecond}초";
   }
 
   @override
@@ -99,30 +128,54 @@ class _FortuneResultState extends State<FortuneResult>
     return Center(
         child: Column(children: [
       Container(
-        margin: const EdgeInsets.only(top: 100),
-        child: Text(
-          getTimerString(),
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+          margin: const EdgeInsets.only(top: 100),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  StrokeText(
+                    text: getTimerString(),
+                    textStyle: TextStyle(fontSize: 24),
+                    strokeColor: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                  Text(
+                    " 뒤",
+                    style: TextStyle(fontSize: 24),
+                  )
+                ],
+              ),
+              Text(
+                "운세가 초기화돼요",
+                style: TextStyle(fontSize: 24),
+              )
+            ],
+          )),
       Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0),
         // color: const Color.fromARGB(255, 193, 182, 182),
         width: 400,
         height: 600,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        child: Column(children: [
           Container(
+            padding: EdgeInsets.only(top: 30),
             child: Column(children: [
               FortuneCategoryIcon(
                   fortuneCategory: widget.fortuneCategory,
                   checked: false,
                   alwaysOpen: true),
               Text("${widget.fortuneCategory.name}",
-                  style: TextStyle(fontSize: 20)),
+                  style: TextStyle(fontSize: 24)),
             ]),
           ),
-          getResultWidget(),
+          Container(
+            alignment: Alignment.center,
+            width: 150,
+            height: 260,
+            child: getResultWidget(),
+          ),
           Container(
             alignment: Alignment.center,
             child: Row(
@@ -131,14 +184,17 @@ class _FortuneResultState extends State<FortuneResult>
                 Synerge(
                   synergeType: SynergeType.place,
                   fortuneCategory: widget.fortuneCategory.name,
+                  cookieOpened: _opened,
                 ),
                 Synerge(
                   synergeType: SynergeType.color,
                   fortuneCategory: widget.fortuneCategory.name,
+                  cookieOpened: _opened,
                 ),
                 Synerge(
                   synergeType: SynergeType.stuff,
                   fortuneCategory: widget.fortuneCategory.name,
+                  cookieOpened: _opened,
                 )
               ],
             ),
