@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -50,32 +51,93 @@ class _SettingPageState extends State<SettingPage> {
             // appBar: AppBar(
             //   title: Text('Notification Settings'),
             // ),
-            floatingActionButton: Container(child: Align()),
-            body: Center(
+            floatingActionButton: Stack(children: [
+              Positioned(
+                  top: 100,
+                  right: 10,
+                  child: IconButton(
+                    icon: SvgPicture.asset("assets/icons/setting_close.svg"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ))
+            ]),
+            body: Container(
+              margin: EdgeInsets.only(top: 250),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // VisibilityDetector(
-                  //   onVisibilityChanged: (visibilityInfo) {
-                  //     _checkNotificationPermission();
-                  //   },
-                  //   key: Key("setting"),
-                  //   child: Text('Visibility detector example'),
-                  // ),
+                  Lottie.asset('assets/lotties/cookie/today/a.json',
+                      animate: false, repeat: false, width: 120),
                   Text(
-                    'Local Notifications are ${_notificationEnabled ? 'enabled' : 'disabled'}',
-                    style: TextStyle(fontSize: 18),
+                    '포춘이는 하루의 메세지를 담아\n날마다 맛있는 포춘쿠키로 태어나요',
+                    style: TextStyle(fontSize: 18, color: Color(0xFF5E5C55)),
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _toggleNotificationPermission,
-                    child: Text(
-                      _notificationEnabled
-                          ? 'Disable Notifications'
-                          : 'Enable Notifications',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
+                  Container(
+                      margin: EdgeInsets.only(left: 20, right: 20, top: 40),
+                      padding: EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Color(0xFFFEF9E6),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(children: [
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "포춘쿠키 알림",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Color(0xFF7F7E7A)),
+                                )),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "쿠키가 구워지면 알려드릴게요!",
+                                style: TextStyle(
+                                    fontSize: 20, color: Color(0xFF33322E)),
+                              ),
+                            ),
+                          ]),
+                          Switch(
+                            activeColor: Colors.white,
+                            activeTrackColor: Colors.black,
+                            value: _notificationEnabled,
+                            onChanged: (value) {
+                              // if (_notificationEnabled) {
+                              openAppSettings();
+                              // }
+                            },
+                          ),
+                        ],
+                      )),
+                  // Container(
+                  //   margin: EdgeInsets.only(left: 20, right: 20, top: 12),
+                  //   padding: EdgeInsets.all(24),
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(20.0),
+                  //     color: Color(0xFFFEF9E6),
+                  //   ),
+                  //   child: const Column(children: [
+                  //     Align(
+                  //       alignment: Alignment.centerLeft,
+                  //       child: Text(
+                  //         "더 나은 포춘이가 될 수 있도록",
+                  //         style:
+                  //             TextStyle(fontSize: 16, color: Color(0xFF7F7E7A)),
+                  //       ),
+                  //     ),
+                  //     Align(
+                  //       alignment: Alignment.centerLeft,
+                  //       child: Text(
+                  //         "앱 후기를 알려주세요",
+                  //         style:
+                  //             TextStyle(fontSize: 20, color: Color(0xFF33322E)),
+                  //       ),
+                  //     ),
+                  //   ]),
+                  // ),
                 ],
               ),
             )));

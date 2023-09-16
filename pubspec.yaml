@@ -74,6 +74,7 @@ flutter:
     - assets/icons/fortune_cookie.svg
     - assets/icons/close.svg
     - assets/icons/setting.svg
+    - assets/icons/setting_close.svg
     - assets/gif/fortune_cookie.gif
     - assets/images/setting_background.png
     - assets/images/background1.png

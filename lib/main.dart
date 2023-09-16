@@ -14,6 +14,8 @@ import 'GSheetApiConfig.dart';
 import 'category.dart';
 import 'category_icon.dart';
 import 'fortune_cookie.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 
 LocalNotificationService localNotificationService = LocalNotificationService();
 
@@ -21,7 +23,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   await localNotificationService.setup();
-  debugPaintSizeEnabled = true;
+  // debugPaintSizeEnabled = true;
   final pref = await SharedPreferences.getInstance();
   // String? lastOpenDateString = await pref.getString("last-open-date");
   // if(lastOpenDateString != null){
@@ -29,8 +31,38 @@ void main() async {
   //     DateFormat("yyyy-MM-dd").parse(lastOpenDateString);
   //   if(lastOpenDate)
   // }
-  await pref.clear();
+
+  checkExpiration();
   runApp(const MyApp());
+}
+
+void checkExpiration() async {
+  // SharedPreferences에 저장된 날짜 가져오기 (기본값: 0)
+  final pref = await SharedPreferences.getInstance();
+
+  final savedTimestamp = pref.getInt('timestamp') ?? 0;
+  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  print(now.day);
+  print(now.hour);
+  Duration offsetTime = DateTime.now().timeZoneOffset;
+  tz.TZDateTime todayMidnight = tz.TZDateTime(
+    tz.local,
+    now.year,
+    now.month,
+    now.day,
+    0,
+    0,
+  ).subtract(offsetTime);
+  print(todayMidnight.day);
+  print(todayMidnight.hour);
+
+  if (savedTimestamp < todayMidnight.millisecondsSinceEpoch) {
+    // 저장된 데이터가 오늘 자정 이전에 저장되었으므로 만료
+    // 데이터 갱신 또는 삭제 작업 수행
+    pref.clear(); // 예를 들어 데이터 삭제
+    // 데이터 갱신 작업 수행
+    pref.setInt('timestamp', now.millisecondsSinceEpoch);
+  }
 }
 
 class MyApp extends StatelessWidget {
