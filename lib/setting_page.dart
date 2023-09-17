@@ -77,8 +77,9 @@ class _SettingPageState extends State<SettingPage> {
             floatingActionButtonLocation: FloatingActionButtonLocation
                 .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
             body: Container(
-              margin: EdgeInsets.only(top: 250),
+              // margin: EdgeInsets.only(top: 250),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Lottie.asset('assets/lotties/cookie/today/a.json',
                       animate: false, repeat: false, width: 120),

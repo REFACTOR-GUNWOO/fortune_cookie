@@ -32,7 +32,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // debugPaintSizeEnabled = true;
+  debugPaintSizeEnabled = true;
   final pref = await SharedPreferences.getInstance();
   // String? lastOpenDateString = await pref.getString("last-open-date");
   // if(lastOpenDateString != null){
@@ -53,14 +53,12 @@ void checkExpiration() async {
 
   final savedTimestamp = pref.getInt('timestamp') ?? 0;
   final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-  print(now.day);
-  print(now.hour);
   Duration offsetTime = DateTime.now().timeZoneOffset;
   tz.TZDateTime todayMidnight = tz.TZDateTime(
     tz.local,
-    now.year,
-    now.month,
-    now.day,
+    now.add(offsetTime).year,
+    now.add(offsetTime).month,
+    now.add(offsetTime).day,
     0,
     0,
   ).subtract(offsetTime);

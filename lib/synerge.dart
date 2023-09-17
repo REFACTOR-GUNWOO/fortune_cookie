@@ -133,7 +133,14 @@ class _SynergeState extends State<Synerge> {
     // await Loading.start(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    setState(() {
+      isLoading = true;
+    });
     await showRewardFullBanner(() async {
+      setState(() {
+        isLoading = false;
+      });
+
       // Loading.end(context);
       BaseSynerge synerge = await getSynerge(type);
       /**
@@ -231,41 +238,42 @@ class _SynergeState extends State<Synerge> {
   }
 
   Widget getWidgetWithLoading() {
-    if (isLoading) {
-      return CircularProgressIndicator();
-    } else {
-      return Column(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            alignment: Alignment.center,
-            child: value == null
-                ? IconButton(
-                    icon: _getSynergeImage(),
-                    iconSize: 72,
-                    onPressed: () async {
-                      if (!widget.cookieOpened) {
-                        toast(context, "운세를 먼저 확인해주세요");
-                        return;
-                      }
+    return Column(
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          alignment: Alignment.center,
+          child: value == null
+              ? IconButton(
+                  icon: _getSynergeImage(),
+                  iconSize: 72,
+                  onPressed: () async {
+                    if (!widget.cookieOpened) {
+                      toast(context, "운세를 먼저 확인해주세요");
+                      return;
+                    }
 
-                      await _setSynergeInfo(widget.synergeType);
-                    },
-                  )
-                : getSynergeResultWidget(widget.synergeType),
-          ),
-          RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                  text: "시너지\n${getSynergeLabel(widget.synergeType)}",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Color.fromARGB(255, 127, 126, 122),
-                      fontFamily: "Suite")))
-        ],
-      );
-    }
+                    if (isLoading) {
+                      toast(context, "광고가 로딩 중이에요!");
+                      return;
+                    }
+
+                    await _setSynergeInfo(widget.synergeType);
+                  },
+                )
+              : getSynergeResultWidget(widget.synergeType),
+        ),
+        RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+                text: "시너지\n${getSynergeLabel(widget.synergeType)}",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Color.fromARGB(255, 127, 126, 122),
+                    fontFamily: "Suite")))
+      ],
+    );
   }
 
   @override
