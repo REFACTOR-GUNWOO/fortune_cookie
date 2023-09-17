@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "233800088312",
+    "firebase_url": "https://fortunecookie-398509-default-rtdb.firebaseio.com",
+    "project_id": "fortunecookie-398509",
+    "storage_bucket": "fortunecookie-398509.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233800088312:android:a65481ff845275a027590d",
+        "android_client_info": {
+          "package_name": "com.example.fortune_cookie_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArbuK6CwDRYnegjP5RbSvCemcitI2OLzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

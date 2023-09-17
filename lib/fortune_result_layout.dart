@@ -73,7 +73,7 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
   @override
   Widget build(BuildContext context) {
     void togglePage() {
-      Navigator.pushNamed(context, '/');
+      Navigator.pushNamed(context, '/main');
     }
 
     final bool byCookieOpen = (ModalRoute.of(context)!.settings.arguments

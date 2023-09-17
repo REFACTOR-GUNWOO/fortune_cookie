@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fortune_cookie_flutter/GSheetApiConfig.dart';
+// import 'package:fortune_cookie_flutter/GSheetApiConfig.dart';
 import 'package:fortune_cookie_flutter/category_icon.dart';
 import 'package:fortune_cookie_flutter/stroke_text.dart';
 import 'package:fortune_cookie_flutter/synerge.dart';
@@ -35,7 +36,7 @@ class _FortuneResultState extends State<FortuneResult>
     with TickerProviderStateMixin {
   bool _opened = false;
   late Timer _timer;
-  late String fortuneResult = "?";
+  late String? fortuneResult;
   DateTime _now = DateTime.now();
   @override
   void initState() {
@@ -47,13 +48,13 @@ class _FortuneResultState extends State<FortuneResult>
         _now = DateTime.now();
       });
     });
-    initializeFortuneRepository();
+    // initializeFortuneRepository();
     initializeFortuneResult();
   }
 
-  initializeFortuneRepository() async {
-    await FortuneRepository.initalWorkSheet();
-  }
+  // initializeFortuneRepository() async {
+  //   await FortuneRepository.initalWorkSheet();
+  // }
 
   initializeFortuneResult() async {
     // if (!_opened) return;
@@ -62,16 +63,6 @@ class _FortuneResultState extends State<FortuneResult>
         _prefs.getString("${widget.fortuneCategory.name}.fortueCookie.result");
     print(saved);
     if (saved == null) {
-      String fortune =
-          await FortuneRepository().getFortune(widget.fortuneCategory);
-      _prefs.setString(
-          "${widget.fortuneCategory.name}.fortueCookie.result", fortune);
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        fortuneResult = fortune;
-      });
     } else {
       if (!mounted) {
         return;
@@ -100,12 +91,12 @@ class _FortuneResultState extends State<FortuneResult>
   Widget getResultWidget() {
     if (_opened) {
       return Text(
-        fortuneResult,
+        fortuneResult ?? "?",
         style: TextStyle(fontSize: 20, color: Color(0xFF4A4941)),
         textAlign: TextAlign.center,
       );
     } else
-      return Text("?", style: TextStyle(fontSize: 20));
+      return SvgPicture.asset("assets/icons/?.svg");
   }
 
   String getTimerString() {
@@ -122,7 +113,7 @@ class _FortuneResultState extends State<FortuneResult>
   @override
   Widget build(BuildContext context) {
     void togglePage() {
-      Navigator.pushNamed(context, '/');
+      Navigator.pushNamed(context, '/main');
     }
 
     return Center(

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -27,6 +28,16 @@ class _SettingPageState extends State<SettingPage> {
     });
   }
 
+  _launchURL() async {
+    if (!await launchUrl(Uri(
+        scheme: 'https',
+        host: 'itunes.apple.com',
+        path: "/app/id1446075923",
+        queryParameters: {'action': 'write-review'}))) {
+      throw Exception('Could not launch');
+    }
+  }
+
   Future<void> _toggleNotificationPermission() async {
     if (_notificationEnabled) {
       await openAppSettings();
@@ -40,12 +51,13 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/setting_background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
+        decoration: const BoxDecoration(
+            color: Color(0xFFFEF9E6),
+            image: DecorationImage(
+              image: AssetImage("assets/images/setting_background.png"),
+              opacity: 0.4,
+              fit: BoxFit.cover,
+            )),
         child: Scaffold(
             backgroundColor: Colors.transparent,
             // appBar: AppBar(
@@ -62,6 +74,8 @@ class _SettingPageState extends State<SettingPage> {
                     },
                   ))
             ]),
+            floatingActionButtonLocation: FloatingActionButtonLocation
+                .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
             body: Container(
               margin: EdgeInsets.only(top: 250),
               child: Column(
@@ -83,23 +97,21 @@ class _SettingPageState extends State<SettingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(children: [
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
+                          const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
                                   "포춘쿠키 알림",
                                   style: TextStyle(
                                       fontSize: 16, color: Color(0xFF7F7E7A)),
-                                )),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "쿠키가 구워지면 알려드릴게요!",
-                                style: TextStyle(
-                                    fontSize: 20, color: Color(0xFF33322E)),
-                              ),
-                            ),
-                          ]),
+                                ),
+                                Text(
+                                  "쿠키가 구워지면 알려드릴게요!",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Color(0xFF33322E)),
+                                ),
+                              ]),
                           Switch(
                             activeColor: Colors.white,
                             activeTrackColor: Colors.black,
@@ -112,32 +124,48 @@ class _SettingPageState extends State<SettingPage> {
                           ),
                         ],
                       )),
-                  // Container(
-                  //   margin: EdgeInsets.only(left: 20, right: 20, top: 12),
-                  //   padding: EdgeInsets.all(24),
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(20.0),
-                  //     color: Color(0xFFFEF9E6),
-                  //   ),
-                  //   child: const Column(children: [
-                  //     Align(
-                  //       alignment: Alignment.centerLeft,
-                  //       child: Text(
-                  //         "더 나은 포춘이가 될 수 있도록",
-                  //         style:
-                  //             TextStyle(fontSize: 16, color: Color(0xFF7F7E7A)),
-                  //       ),
-                  //     ),
-                  //     Align(
-                  //       alignment: Alignment.centerLeft,
-                  //       child: Text(
-                  //         "앱 후기를 알려주세요",
-                  //         style:
-                  //             TextStyle(fontSize: 20, color: Color(0xFF33322E)),
-                  //       ),
-                  //     ),
-                  //   ]),
-                  // ),
+                  Container(
+                    margin: EdgeInsets.only(left: 20, right: 20, top: 12),
+                    padding: EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Color(0xFFFEF9E6),
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "더 나은 포춘이가 될 수 있도록",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Color(0xFF7F7E7A)),
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "앱 후기를 알려주세요",
+                                    style: TextStyle(
+                                        fontSize: 20, color: Color(0xFF33322E)),
+                                  ),
+                                ),
+                              ]),
+                          IconButton(
+                            iconSize: 80,
+                            icon: SvgPicture.asset(
+                              "assets/icons/setting_app_review.svg",
+                            ),
+                            onPressed: () {
+                              _launchURL();
+                            },
+                          )
+                        ]),
+                  ),
                 ],
               ),
             )));

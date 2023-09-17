@@ -95,6 +95,8 @@ class _FortuneCategoryIconState extends State<FortuneCategoryIcon>
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: _getCategoryImage());
+    return Container(
+      child: _getCategoryImage(),
+    );
   }
 }

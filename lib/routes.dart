@@ -5,7 +5,7 @@ import 'package:fortune_cookie_flutter/result_page.dart';
 import 'package:fortune_cookie_flutter/retry_ad.dart';
 import 'package:fortune_cookie_flutter/setting_page.dart';
 
-import 'main.dart';
+import 'MyHomePage.dart';
 
 class Routes {
   Routes._();
@@ -25,7 +25,7 @@ class Routes {
                   as FortuneResultRouteArguments)
               .category,
         ),
-    mainPage: (BuildContext context) => MyApp(),
+    mainPage: (BuildContext context) => MyHomePage(),
     setting: (BuildContext context) => SettingPage()
   };
 }

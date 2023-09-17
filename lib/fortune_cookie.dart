@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -135,7 +137,13 @@ class _FortuneCookieState extends State<FortuneCookie>
     String? saved = _prefs.getString("${category.name}.fortueCookie.result");
     print(saved);
     if (saved == null) {
-      String fortune = await FortuneRepository().getFortune(category);
+      FirebaseDatabase _realtime = FirebaseDatabase.instance;
+      List<Object?> fortuneList =
+          (await _realtime.ref("fortune").child(category.code).get()).value
+              as List<Object?>;
+      final _random = new Random();
+      int randomIndex = _random.nextInt(fortuneList.length);
+      String fortune = fortuneList[randomIndex].toString();
       _prefs.setString("${category.name}.fortueCookie.result", fortune);
       return fortune;
     } else {
