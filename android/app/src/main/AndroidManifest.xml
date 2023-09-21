@@ -4,6 +4,9 @@
         android:label="fortune_cookie_flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+                <meta-data
+              android:name="com.google.android.gms.ads.APPLICATION_ID"
+              android:value="ca-app-pub-8009625065645948~1586923848"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

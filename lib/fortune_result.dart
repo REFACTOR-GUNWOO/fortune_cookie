@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:math';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -62,15 +62,27 @@ class _FortuneResultState extends State<FortuneResult>
     String? saved =
         _prefs.getString("${widget.fortuneCategory.name}.fortueCookie.result");
     print(saved);
-    if (saved == null) {
-    } else {
+    if (saved == null && _opened) {
+      FirebaseDatabase _realtime = FirebaseDatabase.instance;
+      List<Object?> fortuneList = (await _realtime
+              .ref("fortune")
+              .child(widget.fortuneCategory.code)
+              .get())
+          .value as List<Object?>;
+      final _random = new Random();
+      int randomIndex = _random.nextInt(fortuneList.length);
+      String fortune = fortuneList[randomIndex].toString();
+      setState(() {
+        fortuneResult = fortune;
+      });
+    } else if (saved != null) {
       if (!mounted) {
         return;
       }
       setState(() {
         fortuneResult = saved;
       });
-    }
+    } else {}
   }
 
   @override
@@ -144,7 +156,8 @@ class _FortuneResultState extends State<FortuneResult>
               )
             ],
           )),
-      Container(
+      Expanded(
+          child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0),
         // color: const Color.fromARGB(255, 193, 182, 182),
         width: 400,
@@ -197,7 +210,7 @@ class _FortuneResultState extends State<FortuneResult>
             fit: BoxFit.cover,
           ),
         ),
-      )
+      ))
     ]));
   }
 }

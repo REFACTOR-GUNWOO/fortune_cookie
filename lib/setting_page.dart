@@ -98,10 +98,11 @@ class _SettingPageState extends State<SettingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
+                          Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
                                 Text(
                                   "포춘쿠키 알림",
                                   style: TextStyle(
@@ -112,7 +113,7 @@ class _SettingPageState extends State<SettingPage> {
                                   style: TextStyle(
                                       fontSize: 20, color: Color(0xFF33322E)),
                                 ),
-                              ]),
+                              ])),
                           Switch(
                             activeColor: Colors.white,
                             activeTrackColor: Colors.black,

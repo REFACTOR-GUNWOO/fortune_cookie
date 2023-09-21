@@ -41,7 +41,7 @@ dependencies:
   flutter_gif: any
   shared_preferences: ^2.2.0
   lottie: ^2.6.0
-  flutter_local_notifications: ^15.1.1
+  flutter_local_notifications: ^14.0.0
   permission_handler: ^10.4.3
   visibility_detector: ^0.3.3
   gsheets: ^0.5.0

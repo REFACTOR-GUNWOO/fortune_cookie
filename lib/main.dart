@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_gif/flutter_gif.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
 import 'package:fortune_cookie_flutter/local_notification_service.dart';
@@ -34,15 +33,9 @@ void main() async {
 
   debugPaintSizeEnabled = true;
   final pref = await SharedPreferences.getInstance();
-  // String? lastOpenDateString = await pref.getString("last-open-date");
-  // if(lastOpenDateString != null){
-  // DateTime lastOpenDate =
-  //     DateFormat("yyyy-MM-dd").parse(lastOpenDateString);
-  //   if(lastOpenDate)
-  // }
   final FirebaseAuth _auth = FirebaseAuth.instance;
   await _auth.signInAnonymously();
-  // await pref.clear();
+  await pref.clear();
   checkExpiration();
   runApp(const MyApp());
 }

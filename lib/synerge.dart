@@ -131,11 +131,11 @@ class _SynergeState extends State<Synerge> {
   _setSynergeInfo(SynergeType type) async {
     // if (enabled) return;
     // await Loading.start(context);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     setState(() {
       isLoading = true;
     });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     await showRewardFullBanner(() async {
       setState(() {
         isLoading = false;

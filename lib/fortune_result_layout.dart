@@ -90,6 +90,7 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
         ),
         child: Scaffold(
             backgroundColor: Colors.transparent,
+            appBar: null,
             floatingActionButton: Container(
                 width: 180,
                 child: FloatingActionButton(
