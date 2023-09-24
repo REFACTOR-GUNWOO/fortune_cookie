@@ -9,7 +9,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 import 'cookie_open_controller.dart';
-import 'GSheetApiConfig.dart';
 import 'fortune_result_layout.dart';
 
 class FortuneCookie extends StatefulWidget {

@@ -51,6 +51,7 @@ dependencies:
   firebase_database: ^10.0.15
   firebase_auth: ^4.9.0
   url_launcher: ^6.1.14
+  in_app_review: ^2.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,6 +81,7 @@ flutter:
     - assets/icons/close.svg
     - assets/icons/setting.svg
     - assets/icons/?.svg
+    - assets/icons/synerge_ads_click.svg
     - assets/icons/setting_close.svg
     - assets/icons/setting_app_review.svg
     - assets/gif/fortune_cookie.gif

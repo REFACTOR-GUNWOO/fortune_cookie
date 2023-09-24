@@ -10,7 +10,6 @@ import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cookie_open_controller.dart';
-import 'GSheetApiConfig.dart';
 import 'category.dart';
 import 'category_icon.dart';
 import 'fortune_cookie.dart';

@@ -91,20 +91,38 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
         child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: null,
-            floatingActionButton: Container(
-                width: 180,
-                child: FloatingActionButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50.0), // 원하는 모양 및 크기 설정
-                  ),
-                  child: Text(
-                    "운세 뽑으러 가기",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  onPressed: togglePage,
-                  tooltip: 'Increment',
-                  backgroundColor: Color.fromARGB(255, 43, 43, 43),
-                )),
+            floatingActionButton: Stack(children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    width: 180,
+                    height: 62,
+                    child: FloatingActionButton(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 3, color: Colors.black),
+                        borderRadius:
+                            BorderRadius.circular(50.0), // 원하는 모양 및 크기 설정
+                      ),
+                      child: Text(
+                        "운세 뽑으러가기",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      onPressed: togglePage,
+                      tooltip: 'Increment',
+                      backgroundColor: Color.fromARGB(255, 43, 43, 43),
+                      heroTag: null,
+                    )),
+              ),
+              Positioned(
+                  top: 40,
+                  right: 10,
+                  child: IconButton(
+                      iconSize: 42,
+                      icon: SvgPicture.asset("assets/icons/setting.svg"),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/setting');
+                      }))
+            ]),
             floatingActionButtonLocation: FloatingActionButtonLocation
                 .centerFloat, // This trailing comma makes auto-formatting nicer for build methods.
             body: TabBarView(

@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.fortune_cookie_flutter">
    <application
-        android:label="fortune_cookie_flutter"
+        android:label="오늘의 포춘"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
                 <meta-data
               android:name="com.google.android.gms.ads.APPLICATION_ID"
-              android:value="ca-app-pub-8009625065645948~1586923848"/>
+              android:value="ca-app-pub-3222851958863442~3648954676"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

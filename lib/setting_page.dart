@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +6,9 @@ import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:in_app_review/in_app_review.dart';
+
+final InAppReview inAppReview = InAppReview.instance;
 
 class SettingPage extends StatefulWidget {
   @override
@@ -29,12 +33,17 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   _launchURL() async {
-    if (!await launchUrl(Uri(
-        scheme: 'https',
-        host: 'itunes.apple.com',
-        path: "/app/id1446075923",
-        queryParameters: {'action': 'write-review'}))) {
-      throw Exception('Could not launch');
+    if (Platform.isAndroid) {
+      inAppReview.openStoreListing();
+    }
+    if (Platform.isIOS) {
+      if (!await launchUrl(Uri(
+          scheme: 'https',
+          host: 'itunes.apple.com',
+          path: "/app/id1446075923",
+          queryParameters: {'action': 'write-review'}))) {
+        throw Exception('Could not launch');
+      }
     }
   }
 
@@ -65,9 +74,10 @@ class _SettingPageState extends State<SettingPage> {
             // ),
             floatingActionButton: Stack(children: [
               Positioned(
-                  top: 100,
+                  top: 40,
                   right: 10,
                   child: IconButton(
+                    iconSize: 42,
                     icon: SvgPicture.asset("assets/icons/setting_close.svg"),
                     onPressed: () {
                       Navigator.of(context).pop();

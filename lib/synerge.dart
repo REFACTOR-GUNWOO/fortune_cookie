@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fortune_cookie_flutter/GSheetApiConfig.dart';
+import 'package:fortune_cookie_flutter/category.dart';
 import 'package:fortune_cookie_flutter/retry_ad.dart';
+import 'package:fortune_cookie_flutter/synerge_loading_controller.dart';
 import 'package:fortune_cookie_flutter/synerge_open_effect.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'firebase_repository.dart';
 import 'loading.dart';
 
 class Synerge extends StatefulWidget {
   final SynergeType synergeType;
-  final String fortuneCategory;
+  final Category fortuneCategory;
   final bool cookieOpened;
   const Synerge(
       {Key? key,
@@ -37,28 +39,24 @@ class _SynergeState extends State<Synerge> {
   String? value;
   String? color;
   bool isLoading = false;
+  SynergeLoadingController loadingController = SynergeLoadingController();
 
   @override
   void initState() {
     super.initState();
     _loadSynergeInfo();
-    initializeFortuneRepository();
-  }
-
-  initializeFortuneRepository() async {
-    await SynergeRepository.initalWorkSheet();
   }
 
   String _getEnableKey() {
-    return " ${widget.fortuneCategory}${widget.synergeType}/enbaled";
+    return " ${widget.fortuneCategory.code}${widget.synergeType}/enbaled";
   }
 
   String _getSynergeValueKey() {
-    return "${widget.fortuneCategory}/${widget.synergeType}/value";
+    return "${widget.fortuneCategory.code}/${widget.synergeType}/value";
   }
 
   String _getSynergeColorKey() {
-    return "${widget.fortuneCategory}/${widget.synergeType}/value/color";
+    return "${widget.fortuneCategory.code}/${widget.synergeType}/value/color";
   }
 
   _loadSynergeInfo() async {
@@ -137,10 +135,6 @@ class _SynergeState extends State<Synerge> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await showRewardFullBanner(() async {
-      setState(() {
-        isLoading = false;
-      });
-
       // Loading.end(context);
       BaseSynerge synerge = await getSynerge(type);
       /**
@@ -168,6 +162,9 @@ class _SynergeState extends State<Synerge> {
       prefs.setBool(_getEnableKey(), enabled);
       _showMyDialog(synerge);
       _showSynergeOpenEffect();
+      setState(() {
+        isLoading = false;
+      });
     });
   }
 
@@ -246,6 +243,7 @@ class _SynergeState extends State<Synerge> {
           alignment: Alignment.center,
           child: value == null
               ? IconButton(
+                  padding: EdgeInsets.all(0),
                   icon: _getSynergeImage(),
                   iconSize: 72,
                   onPressed: () async {
@@ -254,12 +252,154 @@ class _SynergeState extends State<Synerge> {
                       return;
                     }
 
-                    if (isLoading) {
-                      toast(context, "광고가 로딩 중이에요!");
-                      return;
-                    }
+                    showModalBottomSheet<void>(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        builder: (BuildContext context) {
+                          return Container(
+                              height: 400,
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Stack(children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(top: 35)),
+                                      SvgPicture.asset(
+                                        "assets/images/synerge_disabled.svg",
+                                      ),
+                                      Positioned(
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: SvgPicture.asset(
+                                              "assets/images/category/enabled/${widget.fortuneCategory.code}.svg",
+                                              width: 40,
+                                              height: 40,
+                                            ),
+                                          ))
+                                    ]),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          "시너지 ${getSynergeLabel(widget.synergeType)}",
+                                          style: TextStyle(
+                                              fontSize: 32,
+                                              color: Color(0xFF141414)),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 16)),
+                                        Text(
+                                            "${widget.fortuneCategory.name}를 더욱 긍정적으로\n바꿔줄 ${getSynergeLabel(widget.synergeType)}는?",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Color(0xFF33322E))),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              1.5,
+                                          margin: EdgeInsets.only(
+                                              left: 16, right: 16),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                            color: Color(0xFFEDE7CF),
+                                          ),
+                                          child: TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                    16.0), // 내용에 패딩을 추가합니다.
+                                                child: Text(
+                                                  "다음에 확인하기",
+                                                  style: TextStyle(
+                                                      color: Color(0xFF33322E),
+                                                      fontSize: 20),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 8),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              1.5,
+                                          margin: EdgeInsets.only(
+                                              left: 16, right: 16),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              width: 3,
+                                              color: Colors.black,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                            color: Color(0xFF2b2b2b),
+                                          ),
+                                          child: TextButton(
+                                              onPressed: () async {
+                                                if (isLoading) {
+                                                  toast(
+                                                      context, "광고가 로딩 중이에요!");
+                                                  return;
+                                                }
 
-                    await _setSynergeInfo(widget.synergeType);
+                                                await _setSynergeInfo(
+                                                    widget.synergeType);
+                                              },
+                                              child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0), // 내용에 패딩을 추가합니다.
+                                                  child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          "assets/icons/synerge_ads_click.svg",
+                                                          color: Colors.white,
+                                                        ),
+                                                        Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 6)),
+                                                        Text(
+                                                          "광고보고 확인하기",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 20),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        )
+                                                      ]))),
+                                        ),
+                                        // Padding(
+                                        //   padding: EdgeInsets.only(bottom: 43),
+                                        // ),
+                                      ],
+                                    ),
+                                  ]),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFEF9E6),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  topRight: Radius.circular(30),
+                                ),
+                              ));
+                        });
                   },
                 )
               : getSynergeResultWidget(widget.synergeType),
@@ -278,15 +418,20 @@ class _SynergeState extends State<Synerge> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: 80, height: 140, child: getWidgetWithLoading());
+    return Container(width: 80, height: 112, child: getWidgetWithLoading());
   }
 
   void toast(context, text) {
     final fToast = FToast();
     fToast.init(context);
     Widget toast = Container(
-      margin: EdgeInsets.only(left: 20, right: 20, bottom: 24),
+      width: 1000,
+      margin: EdgeInsets.only(left: 0, right: 0, bottom: 24),
       decoration: BoxDecoration(
+        border: Border.all(
+          width: 3,
+          color: Colors.black,
+        ),
         borderRadius: BorderRadius.circular(12.0),
         color: Color(0xFF2b2b2b),
       ),
@@ -294,7 +439,7 @@ class _SynergeState extends State<Synerge> {
         padding: const EdgeInsets.all(16.0), // 내용에 패딩을 추가합니다.
         child: Text(
           text,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: Colors.white, fontSize: 20),
           textAlign: TextAlign.center,
         ),
       ),

@@ -158,56 +158,62 @@ class _FortuneResultState extends State<FortuneResult>
           )),
       Expanded(
           child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
+        margin: EdgeInsets.only(
+          left: 10,
+          right: 10,
+          top: 0,
+        ),
+        padding: EdgeInsets.only(left: 26, right: 26, top: 30, bottom: 43),
         // color: const Color.fromARGB(255, 193, 182, 182),
-        width: 400,
-        height: 600,
-        child: Column(children: [
-          Container(
-            padding: EdgeInsets.only(top: 30),
-            child: Column(children: [
-              FortuneCategoryIcon(
-                  fortuneCategory: widget.fortuneCategory,
-                  checked: false,
-                  alwaysOpen: true),
-              Text("${widget.fortuneCategory.name}",
-                  style: TextStyle(fontSize: 24)),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 0),
+                child: Column(children: [
+                  FortuneCategoryIcon(
+                      fortuneCategory: widget.fortuneCategory,
+                      checked: false,
+                      alwaysOpen: true),
+                  Text("${widget.fortuneCategory.name}",
+                      style: TextStyle(fontSize: 24)),
+                ]),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                alignment: Alignment.center,
+                // width: 150,
+                // height: 260,
+                child: getResultWidget(),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Synerge(
+                      synergeType: SynergeType.place,
+                      fortuneCategory: widget.fortuneCategory,
+                      cookieOpened: _opened,
+                    ),
+                    Synerge(
+                      synergeType: SynergeType.color,
+                      fortuneCategory: widget.fortuneCategory,
+                      cookieOpened: _opened,
+                    ),
+                    Synerge(
+                      synergeType: SynergeType.stuff,
+                      fortuneCategory: widget.fortuneCategory,
+                      cookieOpened: _opened,
+                    )
+                  ],
+                ),
+              ),
             ]),
-          ),
-          Container(
-            alignment: Alignment.center,
-            width: 150,
-            height: 260,
-            child: getResultWidget(),
-          ),
-          Container(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Synerge(
-                  synergeType: SynergeType.place,
-                  fortuneCategory: widget.fortuneCategory.name,
-                  cookieOpened: _opened,
-                ),
-                Synerge(
-                  synergeType: SynergeType.color,
-                  fortuneCategory: widget.fortuneCategory.name,
-                  cookieOpened: _opened,
-                ),
-                Synerge(
-                  synergeType: SynergeType.stuff,
-                  fortuneCategory: widget.fortuneCategory.name,
-                  cookieOpened: _opened,
-                )
-              ],
-            ),
-          ),
-        ]),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/result_card.png"),
-            fit: BoxFit.cover,
+            fit: BoxFit.fitHeight,
           ),
         ),
       ))

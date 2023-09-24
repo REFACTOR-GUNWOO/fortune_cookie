@@ -11,7 +11,6 @@ import 'package:fortune_cookie_flutter/routes.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cookie_open_controller.dart';
-import 'GSheetApiConfig.dart';
 import 'category.dart';
 import 'category_icon.dart';
 import 'fortune_cookie.dart';
@@ -82,7 +81,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
     _controller = FlutterGifController(vsync: this);
     _tabController = TabController(vsync: this, length: getCategories().length);
-    _tabController.addListener(onTabSwiped);
+    _tabController.animation?.addListener(() {
+      int indexChange = _tabController.offset.round();
+      int index = _tabController.index + indexChange;
+
+      if (index != _currentTabIndex) {
+        setState(() => _currentTabIndex = index);
+      }
+    });
     // _clearData();
   }
 
@@ -94,12 +100,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void onTabSwiped() {
-    if (_tabController.index != _tabController.previousIndex)
-      // Tab Changed swiping to a new tab
-      setCurrentTabIndex(_tabController.index);
   }
 
   AssetImage getBackgroundByTab(int index) {
@@ -115,6 +115,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Container(
+        // padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 50),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: getBackgroundByTab(_tabController.index),
@@ -132,37 +133,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 // padding: EdgeInsets.zero,
                 indicatorPadding: EdgeInsets.zero,
                 // labelPadding: EdgeInsets.zero,
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                labelPadding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 45),
+                labelPadding: EdgeInsets.symmetric(horizontal: 0),
                 controller: _tabController,
-                onTap: (index) => {setCurrentTabIndex(index)},
                 tabs: getCategories()
                     .map(
                       (e) => Tab(
-                          height: 100,
+                          height: 120,
                           iconMargin: EdgeInsets.all(0),
                           child: Column(children: [
                             SizedBox(
-                              width: 60,
-                              height: 60,
-                              child: ValueListenableBuilder(
-                                  valueListenable: CookieOpenController(),
-                                  builder: (BuildContext context,
-                                      List<Category> value, Widget? child) {
-                                    return FortuneCategoryIcon(
-                                        fortuneCategory: e,
-                                        checked:
-                                            (getCategories()[_currentTabIndex]
-                                                        .name ==
-                                                    e.name) ||
-                                                value.any(
-                                                    (it) => it.name == e.name),
-                                        alwaysOpen: false);
-                                  }),
-                            ),
+                                width: 72,
+                                height: 72,
+                                child: FortuneCategoryIcon(
+                                    fortuneCategory: e,
+                                    checked: (getCategories()[_currentTabIndex]
+                                            .name ==
+                                        e.name),
+                                    alwaysOpen: false)),
                             SizedBox(
-                                height: 40,
-                                width: 100,
+                                height: 45,
+                                width: 80,
                                 child: Center(
                                     child: Text(
                                   e.tabName,
@@ -191,22 +182,35 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 indicator: BoxDecoration(),
                 splashFactory: NoSplash.splashFactory),
           ),
-          body: TabBarView(
-              controller: _tabController,
-              children: getCategories()
-                  .map(
-                    (e) => FortuneCookie(
-                      category: e,
-                    ),
-                  )
-                  .toList()),
+          extendBody: true,
+          body: Container(
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height / 12),
+              child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                    Expanded(
+                        child: TabBarView(
+                            controller: _tabController,
+                            children: getCategories()
+                                .map(
+                                  (e) => FortuneCookie(
+                                    category: e,
+                                  ),
+                                )
+                                .toList()))
+                  ]))),
           floatingActionButton: Stack(children: [
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
                   width: 180,
+                  height: 62,
                   child: FloatingActionButton(
                     shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 3, color: Colors.black),
                       borderRadius:
                           BorderRadius.circular(50.0), // 원하는 모양 및 크기 설정
                     ),
@@ -221,9 +225,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   )),
             ),
             Positioned(
-                top: 100,
+                top: 40,
                 right: 10,
                 child: IconButton(
+                    iconSize: 42,
                     icon: SvgPicture.asset("assets/icons/setting.svg"),
                     onPressed: () {
                       Navigator.pushNamed(context, '/setting');
