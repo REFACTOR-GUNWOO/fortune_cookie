@@ -30,7 +30,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  debugPaintSizeEnabled = true;
+  // debugPaintSizeEnabled = true;
   final pref = await SharedPreferences.getInstance();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   await _auth.signInAnonymously();
@@ -75,6 +75,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         home: SplashScreen(),
         title: 'Flutter Demo',
+        builder: (context, child) {
+          final MediaQueryData data = MediaQuery.of(context);
+          return MediaQuery(
+            data: data.copyWith(textScaleFactor: 1.0),
+            child: child!,
+          );
+        },
         theme: ThemeData(
           fontFamily: "Suite",
           // This is the theme of your application.

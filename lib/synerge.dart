@@ -238,8 +238,8 @@ class _SynergeState extends State<Synerge> {
     return Column(
       children: [
         Container(
-          width: 80,
-          height: 80,
+          width: 72,
+          height: 72,
           alignment: Alignment.center,
           child: value == null
               ? IconButton(
@@ -258,14 +258,13 @@ class _SynergeState extends State<Synerge> {
                         elevation: 0,
                         builder: (BuildContext context) {
                           return Container(
-                              height: 400,
+                              height: 530,
                               child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  // mainAxisAlignment:
+                                  //     MainAxisAlignment.spaceBetween,
                                   children: [
+                                    Padding(padding: EdgeInsets.only(top: 32)),
                                     Stack(children: [
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 35)),
                                       SvgPicture.asset(
                                         "assets/images/synerge_disabled.svg",
                                       ),
@@ -281,6 +280,7 @@ class _SynergeState extends State<Synerge> {
                                             ),
                                           ))
                                     ]),
+                                    Padding(padding: EdgeInsets.only(top: 32)),
                                     Column(
                                       children: [
                                         Text(
@@ -299,6 +299,7 @@ class _SynergeState extends State<Synerge> {
                                                 color: Color(0xFF33322E))),
                                       ],
                                     ),
+                                    Padding(padding: EdgeInsets.only(top: 32)),
                                     Column(
                                       children: [
                                         Container(
@@ -319,7 +320,7 @@ class _SynergeState extends State<Synerge> {
                                               },
                                               child: Padding(
                                                 padding: const EdgeInsets.all(
-                                                    16.0), // 내용에 패딩을 추가합니다.
+                                                    10.0), // 내용에 패딩을 추가합니다.
                                                 child: Text(
                                                   "다음에 확인하기",
                                                   style: TextStyle(
@@ -361,7 +362,7 @@ class _SynergeState extends State<Synerge> {
                                               },
                                               child: Padding(
                                                   padding: const EdgeInsets.all(
-                                                      16.0), // 내용에 패딩을 추가합니다.
+                                                      10.0), // 내용에 패딩을 추가합니다.
                                                   child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -386,9 +387,9 @@ class _SynergeState extends State<Synerge> {
                                                         )
                                                       ]))),
                                         ),
-                                        // Padding(
-                                        //   padding: EdgeInsets.only(bottom: 43),
-                                        // ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 43),
+                                        ),
                                       ],
                                     ),
                                   ]),
@@ -418,7 +419,7 @@ class _SynergeState extends State<Synerge> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: 80, height: 112, child: getWidgetWithLoading());
+    return Container(width: 80, height: 120, child: getWidgetWithLoading());
   }
 
   void toast(context, text) {

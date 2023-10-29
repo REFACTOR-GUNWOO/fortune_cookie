@@ -131,7 +131,9 @@ class _FortuneResultState extends State<FortuneResult>
     return Center(
         child: Column(children: [
       Container(
-          margin: const EdgeInsets.only(top: 100),
+          margin: const EdgeInsets.only(
+            top: 100,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -158,12 +160,8 @@ class _FortuneResultState extends State<FortuneResult>
           )),
       Expanded(
           child: Container(
-        margin: EdgeInsets.only(
-          left: 10,
-          right: 10,
-          top: 0,
-        ),
-        padding: EdgeInsets.only(left: 26, right: 26, top: 30, bottom: 43),
+        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 80),
+        padding: EdgeInsets.only(left: 26, right: 26, top: 30, bottom: 0),
         // color: const Color.fromARGB(255, 193, 182, 182),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,6 +185,7 @@ class _FortuneResultState extends State<FortuneResult>
                 child: getResultWidget(),
               ),
               Container(
+                padding: EdgeInsets.only(bottom: 70),
                 alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -213,7 +212,7 @@ class _FortuneResultState extends State<FortuneResult>
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/result_card.png"),
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.fill,
           ),
         ),
       ))

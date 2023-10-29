@@ -74,7 +74,7 @@ class _SettingPageState extends State<SettingPage> {
             // ),
             floatingActionButton: Stack(children: [
               Positioned(
-                  top: 40,
+                  top: 100,
                   right: 10,
                   child: IconButton(
                     iconSize: 42,

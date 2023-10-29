@@ -60,13 +60,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
   }
 
-  void setCurrentTabIndex(int index) {
-    print(index);
-    setState(() {
-      _currentTabIndex = index;
-    });
-  }
-
   String getToday() {
     DateTime now = DateTime.now();
     DateFormat formatter = DateFormat('M월 d일');
@@ -118,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         // padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 50),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: getBackgroundByTab(_tabController.index),
+            image: getBackgroundByTab(_currentTabIndex),
             fit: BoxFit.cover,
           ),
         ),
@@ -184,8 +177,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
           extendBody: true,
           body: Container(
-              margin: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height / 12),
+              margin: EdgeInsets.only(bottom: 206),
               child: Center(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -225,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   )),
             ),
             Positioned(
-                top: 40,
+                top: 100,
                 right: 10,
                 child: IconButton(
                     iconSize: 42,

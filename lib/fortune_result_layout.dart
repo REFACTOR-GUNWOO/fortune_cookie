@@ -50,7 +50,7 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
     // SingleTickerProviderStateMixin를 상속 받아서
     // vsync에 this 형태로 전달해야 애니메이션이 정상 처리된다.
     _tabController = TabController(vsync: this, length: getCategories().length);
-    _tabController.addListener(onTabSwiped);
+    _tabController.animation?.addListener(onTabSwiped);
     if (widget.targetCategory != null) {
       _tabController.animateTo(getCategories()
               .indexWhere((e) => e.name == widget.targetCategory.name) ??
@@ -63,10 +63,11 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
   }
 
   void onTabSwiped() {
-    if (_tabController.index != _tabController.previousIndex) {
-      setState(() {
-        _currentTabIndex = _tabController.index;
-      });
+    int indexChange = _tabController.offset.round();
+    int index = _tabController.index + indexChange;
+
+    if (index != _currentTabIndex) {
+      setState(() => _currentTabIndex = index);
     }
   }
 
@@ -114,7 +115,7 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
                     )),
               ),
               Positioned(
-                  top: 40,
+                  top: 100,
                   right: 10,
                   child: IconButton(
                       iconSize: 42,
