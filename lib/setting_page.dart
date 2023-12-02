@@ -40,7 +40,7 @@ class _SettingPageState extends State<SettingPage> {
       if (!await launchUrl(Uri(
           scheme: 'https',
           host: 'itunes.apple.com',
-          path: "/app/id1446075923",
+          path: "/app/id6471259154",
           queryParameters: {'action': 'write-review'}))) {
         throw Exception('Could not launch');
       }
@@ -74,7 +74,7 @@ class _SettingPageState extends State<SettingPage> {
             // ),
             floatingActionButton: Stack(children: [
               Positioned(
-                  top: 100,
+                  top: MediaQuery.of(context).size.height / 10,
                   right: 10,
                   child: IconButton(
                     iconSize: 42,
@@ -104,6 +104,18 @@ class _SettingPageState extends State<SettingPage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
                         color: Color(0xFFFEF9E6),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromARGB(6, 0, 0, 0),
+                            blurRadius: 32,
+                            offset: Offset(0, 4), // Shadow position
+                          ),
+                          BoxShadow(
+                            color: Color.fromARGB(6, 0, 0, 0),
+                            blurRadius: 4,
+                            offset: Offset(0, 4), // Shadow position
+                          ),
+                        ],
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,6 +154,18 @@ class _SettingPageState extends State<SettingPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
                       color: Color(0xFFFEF9E6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromARGB(6, 0, 0, 0),
+                          blurRadius: 32,
+                          offset: Offset(0, 4), // Shadow position
+                        ),
+                        BoxShadow(
+                          color: Color.fromARGB(6, 0, 0, 0),
+                          blurRadius: 4,
+                          offset: Offset(0, 4), // Shadow position
+                        ),
+                      ],
                     ),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

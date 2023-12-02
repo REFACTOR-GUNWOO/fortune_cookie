@@ -167,10 +167,9 @@ class _FortuneCookieState extends State<FortuneCookie>
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Stack(children: [
-      Positioned(
-          left: 0,
-          right: 0,
+        child: Column(children: [
+      Flexible(
+          flex: 3,
           child: IconButton(
               iconSize: 350,
               onPressed: () async {
@@ -187,10 +186,8 @@ class _FortuneCookieState extends State<FortuneCookie>
                 _incrementCounter();
               },
               icon: _getCookieImage())),
-      Positioned(
-          left: 0,
-          right: 0,
-          top: 320,
+      Flexible(
+          flex: 1,
           child: Text(
             getTitle(),
             style: TextStyle(fontSize: 32),

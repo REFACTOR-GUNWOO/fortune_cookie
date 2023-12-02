@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class StrokeText extends StatelessWidget {
   final String text;
   final TextStyle textStyle;
+  final TextAlign textAlign;
   final double strokeWidth;
   final Color strokeColor;
 
@@ -12,17 +13,21 @@ class StrokeText extends StatelessWidget {
       {Key? key,
       required this.text,
       required this.textStyle,
+      required this.textAlign,
       required this.strokeWidth,
       required this.strokeColor})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Text(text,
-        style: textStyle.copyWith(
-            inherit: true,
-            shadows: outlinedText(
-                strokeColor: strokeColor, strokeWidth: strokeWidth)));
+    return Text(
+      text,
+      style: textStyle.copyWith(
+          inherit: true,
+          shadows:
+              outlinedText(strokeColor: strokeColor, strokeWidth: strokeWidth)),
+      textAlign: textAlign,
+    );
   }
 
   static List<Shadow> outlinedText(

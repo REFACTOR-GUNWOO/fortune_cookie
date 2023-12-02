@@ -21,7 +21,8 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  final Category? targetCategory;
+  const MyHomePage({Key? key, required this.targetCategory}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -39,9 +40,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 0;
   bool _showTooltip = true;
-  bool enableTouchFortuneCookie = true;
   bool showResultPage = false;
   int _currentTabIndex = 0;
+  bool isOpenedCookie = false;
+
   late TabController _tabController;
 
   void togglePage() {
@@ -77,12 +79,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _tabController.animation?.addListener(() {
       int indexChange = _tabController.offset.round();
       int index = _tabController.index + indexChange;
-
       if (index != _currentTabIndex) {
         setState(() => _currentTabIndex = index);
       }
     });
+    if (widget.targetCategory != null) {
+      _tabController.index = (getCategories()
+              .indexWhere((e) => e.name == widget.targetCategory?.name) ??
+          0);
+    }
+
     // _clearData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 이곳에서 상태에 의존하는 작업을 수행한다.
+    precacheImage(getBackgroundByTab(0), context);
+    precacheImage(getBackgroundByTab(1), context);
+    precacheImage(getBackgroundByTab(2), context);
+    precacheImage(getBackgroundByTab(3), context);
   }
 
   _clearData() async {
@@ -97,6 +114,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   AssetImage getBackgroundByTab(int index) {
     return AssetImage("assets/images/background${index + 1}.png");
+  }
+
+  String _getOpenedKey(String categoryName) {
+    return "${categoryName}.fortueCookie.opened";
+  }
+
+  Future<bool> isOpendCookie(String categoryName) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    return _prefs.getBool(_getOpenedKey(categoryName)) ?? false;
   }
 
   @override
@@ -177,7 +203,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
           extendBody: true,
           body: Container(
-              margin: EdgeInsets.only(bottom: 206),
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height / 5),
               child: Center(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -217,7 +244,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   )),
             ),
             Positioned(
-                top: 100,
+                top: MediaQuery.of(context).size.height / 10,
                 right: 10,
                 child: IconButton(
                     iconSize: 42,

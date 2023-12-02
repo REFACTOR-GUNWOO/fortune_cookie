@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
         appBar: null,
         body: Stack(children: [
           Center(
-            child: MyHomePage(),
+            child: MyHomePage(targetCategory: null),
           ),
           if (!splashEnded)
             AnimatedOpacity(

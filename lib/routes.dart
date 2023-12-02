@@ -25,7 +25,8 @@ class Routes {
                   as FortuneResultRouteArguments)
               .category,
         ),
-    mainPage: (BuildContext context) => MyHomePage(),
+    mainPage: (BuildContext context) => MyHomePage(
+        targetCategory: ModalRoute.of(context)!.settings.arguments as Category),
     setting: (BuildContext context) => SettingPage()
   };
 }

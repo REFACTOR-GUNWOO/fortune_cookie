@@ -52,10 +52,20 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
     _tabController = TabController(vsync: this, length: getCategories().length);
     _tabController.animation?.addListener(onTabSwiped);
     if (widget.targetCategory != null) {
-      _tabController.animateTo(getCategories()
-              .indexWhere((e) => e.name == widget.targetCategory.name) ??
+      _tabController.index = (getCategories()
+              .indexWhere((e) => e.name == widget.targetCategory?.name) ??
           0);
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 이곳에서 상태에 의존하는 작업을 수행한다.
+    precacheImage(getBackgroundByTab(0), context);
+    precacheImage(getBackgroundByTab(1), context);
+    precacheImage(getBackgroundByTab(2), context);
+    precacheImage(getBackgroundByTab(3), context);
   }
 
   AssetImage getBackgroundByTab(int index) {
@@ -74,7 +84,8 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
   @override
   Widget build(BuildContext context) {
     void togglePage() {
-      Navigator.pushNamed(context, '/main');
+      Navigator.pushNamed(context, '/main',
+          arguments: getCategories()[_tabController.index]);
     }
 
     final bool byCookieOpen = (ModalRoute.of(context)!.settings.arguments
@@ -115,7 +126,7 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
                     )),
               ),
               Positioned(
-                  top: 100,
+                  top: MediaQuery.of(context).size.height / 10,
                   right: 10,
                   child: IconButton(
                       iconSize: 42,

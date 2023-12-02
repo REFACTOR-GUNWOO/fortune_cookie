@@ -34,7 +34,7 @@ void main() async {
   final pref = await SharedPreferences.getInstance();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   await _auth.signInAnonymously();
-  await pref.clear();
+  // await pref.clear();
   checkExpiration();
   runApp(const MyApp());
 }

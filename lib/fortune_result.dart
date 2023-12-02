@@ -132,7 +132,7 @@ class _FortuneResultState extends State<FortuneResult>
         child: Column(children: [
       Container(
           margin: const EdgeInsets.only(
-            top: 100,
+            top: 64,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -143,6 +143,7 @@ class _FortuneResultState extends State<FortuneResult>
                   StrokeText(
                     text: getTimerString(),
                     textStyle: TextStyle(fontSize: 24),
+                    textAlign: TextAlign.center,
                     strokeColor: Colors.white,
                     strokeWidth: 2,
                   ),
@@ -160,8 +161,12 @@ class _FortuneResultState extends State<FortuneResult>
           )),
       Expanded(
           child: Container(
-        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 80),
-        padding: EdgeInsets.only(left: 26, right: 26, top: 30, bottom: 0),
+        margin: EdgeInsets.only(
+            left: 10,
+            right: 10,
+            top: 0,
+            bottom: min(MediaQuery.of(context).size.height / 8, 100)),
+        padding: EdgeInsets.only(left: 26, right: 26, top: 35, bottom: 0),
         // color: const Color.fromARGB(255, 193, 182, 182),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,14 +183,15 @@ class _FortuneResultState extends State<FortuneResult>
                 ]),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 30),
+                padding: EdgeInsets.symmetric(horizontal: 40),
                 alignment: Alignment.center,
                 // width: 150,
                 // height: 260,
                 child: getResultWidget(),
               ),
               Container(
-                padding: EdgeInsets.only(bottom: 70),
+                padding: EdgeInsets.only(
+                    bottom: min(MediaQuery.of(context).size.height / 10, 80)),
                 alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
