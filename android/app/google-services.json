@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:233800088312:android:a65481ff845275a027590d",
         "android_client_info": {
-          "package_name": "com.example.fortune_cookie_flutter"
+          "package_name": "com.snack.fortune_cookie_flutter"
         }
       },
       "oauth_client": [],

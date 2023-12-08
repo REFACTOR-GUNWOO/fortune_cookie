@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_gif/flutter_gif.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
 import 'package:fortune_cookie_flutter/local_notification_service.dart';
@@ -36,6 +37,12 @@ void main() async {
   await _auth.signInAnonymously();
   // await pref.clear();
   checkExpiration();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestPermission();
   runApp(const MyApp());
 }
 
