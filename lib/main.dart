@@ -1,21 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_gif/flutter_gif.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
 import 'package:fortune_cookie_flutter/local_notification_service.dart';
 import 'package:fortune_cookie_flutter/splash_page.dart';
-import 'package:intl/intl.dart';
 import 'package:fortune_cookie_flutter/routes.dart';
+import 'package:fortune_cookie_flutter/splash_page_ios.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'cookie_open_controller.dart';
-import 'category.dart';
-import 'category_icon.dart';
-import 'fortune_cookie.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +28,7 @@ void main() async {
   final pref = await SharedPreferences.getInstance();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   await _auth.signInAnonymously();
-  // await pref.clear();
+  await pref.clear();
   checkExpiration();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -47,7 +40,6 @@ void main() async {
 }
 
 void checkExpiration() async {
-  // SharedPreferences에 저장된 날짜 가져오기 (기본값: 0)
   final pref = await SharedPreferences.getInstance();
 
   final savedTimestamp = pref.getInt('timestamp') ?? 0;
@@ -80,7 +72,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: SplashScreen(),
+        home: Platform.isAndroid ? SplashScreen() : SplashScreenIos(),
         title: 'Flutter Demo',
         builder: (context, child) {
           final MediaQueryData data = MediaQuery.of(context);
@@ -90,7 +82,7 @@ class MyApp extends StatelessWidget {
           );
         },
         theme: ThemeData(
-          fontFamily: "Suite",
+          fontFamily: Platform.isAndroid ? "Suite" : "IosFont",
           // This is the theme of your application.
           //
           // Try running your application with "flutter run". You'll see the

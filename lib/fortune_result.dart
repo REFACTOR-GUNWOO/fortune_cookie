@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:fortune_cookie_flutter/GSheetApiConfig.dart';
 import 'package:fortune_cookie_flutter/category_icon.dart';
+import 'package:fortune_cookie_flutter/firebase_repository.dart';
+import 'package:fortune_cookie_flutter/phrase_repository.dart';
 import 'package:fortune_cookie_flutter/stroke_text.dart';
 import 'package:fortune_cookie_flutter/synerge.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -37,6 +38,7 @@ class _FortuneResultState extends State<FortuneResult>
   bool _opened = false;
   late Timer _timer;
   late String? fortuneResult;
+  late BasePhrase? phraseResult;
   DateTime _now = DateTime.now();
   @override
   void initState() {
@@ -63,15 +65,8 @@ class _FortuneResultState extends State<FortuneResult>
         _prefs.getString("${widget.fortuneCategory.name}.fortueCookie.result");
     print(saved);
     if (saved == null && _opened) {
-      FirebaseDatabase _realtime = FirebaseDatabase.instance;
-      List<Object?> fortuneList = (await _realtime
-              .ref("fortune")
-              .child(widget.fortuneCategory.code)
-              .get())
-          .value as List<Object?>;
-      final _random = new Random();
-      int randomIndex = _random.nextInt(fortuneList.length);
-      String fortune = fortuneList[randomIndex].toString();
+      String fortune =
+          await FortuneRepository().getFortune(widget.fortuneCategory);
       setState(() {
         fortuneResult = fortune;
       });
@@ -81,6 +76,31 @@ class _FortuneResultState extends State<FortuneResult>
       }
       setState(() {
         fortuneResult = saved;
+      });
+    } else {}
+  }
+
+  initializePhraseResult() async {
+    // if (!_opened) return;
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String? savedPhraseString =
+        _prefs.getString("${widget.fortuneCategory.name}.phrase.phraseString");
+    String? savedAuthor =
+        _prefs.getString("${widget.fortuneCategory.name}.phrase.author");
+    print(savedPhraseString);
+    print(savedAuthor);
+    if (savedPhraseString == null && _opened) {
+      BasePhrase phrase =
+          await PhraseRepository().getPhrase(widget.fortuneCategory);
+      setState(() {
+        phraseResult = phrase;
+      });
+    } else if (savedPhraseString != null) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        phraseResult = BasePhrase(savedPhraseString, savedAuthor!);
       });
     } else {}
   }
@@ -193,26 +213,28 @@ class _FortuneResultState extends State<FortuneResult>
                 padding: EdgeInsets.only(
                     bottom: min(MediaQuery.of(context).size.height / 10, 80)),
                 alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Synerge(
-                      synergeType: SynergeType.place,
-                      fortuneCategory: widget.fortuneCategory,
-                      cookieOpened: _opened,
-                    ),
-                    Synerge(
-                      synergeType: SynergeType.color,
-                      fortuneCategory: widget.fortuneCategory,
-                      cookieOpened: _opened,
-                    ),
-                    Synerge(
-                      synergeType: SynergeType.stuff,
-                      fortuneCategory: widget.fortuneCategory,
-                      cookieOpened: _opened,
-                    )
-                  ],
-                ),
+                child: Platform.isAndroid
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Synerge(
+                            synergeType: SynergeType.place,
+                            fortuneCategory: widget.fortuneCategory,
+                            cookieOpened: _opened,
+                          ),
+                          Synerge(
+                            synergeType: SynergeType.color,
+                            fortuneCategory: widget.fortuneCategory,
+                            cookieOpened: _opened,
+                          ),
+                          Synerge(
+                            synergeType: SynergeType.stuff,
+                            fortuneCategory: widget.fortuneCategory,
+                            cookieOpened: _opened,
+                          )
+                        ],
+                      )
+                    : null,
               ),
             ]),
         decoration: BoxDecoration(

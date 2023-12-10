@@ -1,24 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_gif/flutter_gif.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fortune_cookie_flutter/fortune_cookie_ios.dart';
 import 'package:fortune_cookie_flutter/fortune_result_layout.dart';
-import 'package:fortune_cookie_flutter/local_notification_service.dart';
-import 'package:fortune_cookie_flutter/splash_page.dart';
 import 'package:intl/intl.dart';
-import 'package:fortune_cookie_flutter/routes.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'cookie_open_controller.dart';
 import 'category.dart';
 import 'category_icon.dart';
 import 'fortune_cookie.dart';
-// import 'package:timezone/timezone.dart' as tz;
-// import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class MyHomePage extends StatefulWidget {
   final Category? targetCategory;
@@ -177,9 +168,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     child: Text(
                                   e.tabName,
                                   style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontFamily: "Suite"),
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                  ),
                                   textAlign: TextAlign.center,
                                 )
 
@@ -215,9 +206,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                             controller: _tabController,
                             children: getCategories()
                                 .map(
-                                  (e) => FortuneCookie(
-                                    category: e,
-                                  ),
+                                  (e) => Platform.isAndroid
+                                      ? FortuneCookie(
+                                          category: e,
+                                        )
+                                      : FortuneCookieIos(
+                                          category: e,
+                                        ),
                                 )
                                 .toList()))
                   ]))),

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fortune_cookie_flutter/MyHomePageIos.dart';
 import 'package:lottie/lottie.dart';
 import 'MyHomePage.dart';
 
@@ -29,7 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
         appBar: null,
         body: Stack(children: [
           Center(
-            child: MyHomePage(targetCategory: null),
+            child: Platform.isAndroid
+                ? MyHomePage(targetCategory: null)
+                : MyHomePageIos(targetCategory: null),
           ),
           if (!splashEnded)
             AnimatedOpacity(

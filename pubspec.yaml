@@ -146,5 +146,8 @@ flutter:
     - family: Suite
       fonts:
         - asset: assets/fonts/font.ttf
+    - family: IosFont
+      fonts:
+        - asset: assets/fonts/iosFontBold.otf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

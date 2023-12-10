@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/fortune_result.dart';
+import 'package:fortune_cookie_flutter/fortune_result_ios.dart';
 import 'package:fortune_cookie_flutter/synerge.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -140,8 +143,11 @@ class _FortuneResultLayoutState extends State<FortuneResultLayout>
             body: TabBarView(
                 controller: _tabController,
                 children: categories
-                    .map((e) => FortuneResult(
-                        fortuneCategory: e, byCookieOpen: byCookieOpen))
+                    .map((e) => Platform.isAndroid
+                        ? FortuneResult(
+                            fortuneCategory: e, byCookieOpen: byCookieOpen)
+                        : FortuneResultIos(
+                            fortuneCategory: e, byCookieOpen: byCookieOpen))
                     .toList())));
   }
 }

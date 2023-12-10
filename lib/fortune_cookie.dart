@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fortune_cookie_flutter/category.dart';
+import 'package:fortune_cookie_flutter/firebase_repository.dart';
+import 'package:fortune_cookie_flutter/phrase_repository.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
@@ -130,23 +131,21 @@ class _FortuneCookieState extends State<FortuneCookie>
     }
   }
 
-  Future<String> setFortuneResult(Category category) async {
+  Future<void> setFortuneResult(Category category) async {
     // if (!_opened) return;
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String? saved = _prefs.getString("${category.name}.fortueCookie.result");
     print(saved);
     if (saved == null) {
-      FirebaseDatabase _realtime = FirebaseDatabase.instance;
-      List<Object?> fortuneList =
-          (await _realtime.ref("fortune").child(category.code).get()).value
-              as List<Object?>;
-      final _random = new Random();
-      int randomIndex = _random.nextInt(fortuneList.length);
-      String fortune = fortuneList[randomIndex].toString();
-      _prefs.setString("${category.name}.fortueCookie.result", fortune);
-      return fortune;
-    } else {
-      return saved;
+      if (Platform.isAndroid) {
+        String fortune = await FortuneRepository().getFortune(category);
+        _prefs.setString("${category.name}.fortueCookie.result", fortune);
+      } else {
+        BasePhrase phrase = await PhraseRepository().getPhrase(category);
+        _prefs.setString(
+            "${category.name}.phrase.phraseString", phrase.phraseString);
+        _prefs.setString("${category.name}.phrase.author", phrase.author);
+      }
     }
   }
 
